@@ -198,7 +198,7 @@ footer{margin-top:60px;color:var(--ink2);font-size:12.5px}
   <div class="figure">
     <div class="ftitle">로그 시간당 임금격차의 요인별 기여</div>
     <div class="fsub">풀드 Oaxaca-Blinder 분해 · 단위: 로그포인트×100 (≈ %)</div>
-    <div class="tabs" role="group" aria-label="모형"><button type="button" data-wf="oaxaca_ind" aria-pressed="true">산업 모형 (재해율 포함)</button><button type="button" data-wf="oaxaca_occ" aria-pressed="false">직종 모형</button></div>
+    <div class="tabs" role="group" aria-label="모형"><button type="button" data-wf="oaxaca_occ" aria-pressed="true">직종 모형 (주 모형)</button><button type="button" data-wf="oaxaca_ind" aria-pressed="false">산업 모형 (재해율 포함)</button></div>
     <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>전체·잔여 격차</span><span><i class="sw rect" style="background:var(--pos)"></i>격차를 키우는 요인</span><span><i class="sw rect" style="background:var(--neg)"></i>격차를 줄이는 요인</span></div>
     <div id="chart-waterfall"></div>
     <details class="tbl"><summary>표로 보기 (계수 포함)</summary><div class="tbl-wrap" id="tbl-wf"></div></details>
@@ -408,7 +408,7 @@ function waterfall(key){
   });
   const coefRows=Object.entries(O.coef).map(([k,c])=>[k,fmt(c.b,4),fmt(c.se,4),c.se?fmt(c.b/c.se,2):"–"]);
   table("tbl-wf",["변수","계수","강건 표준오차","t"],coefRows);
-  document.getElementById("wf-src").textContent=`셀 수 ${fmt(O.n_cells)} · 가중 R² ${fmt(O.r2,3)} · 분석연도 ${O.years.join(", ")} · 근로자 수 가중 WLS, HC1 표준오차`;
+  document.getElementById("wf-src").textContent=`셀 수 ${fmt(O.n_cells)} · 가중 R² ${fmt(O.r2,3)} · 분석연도 ${O.years.join(", ")} · 근로자 수 가중 WLS, HC1 표준오차`+(O.coverage_pct!=null?` · 재해 자료 포괄 근로자 ${fmt(O.coverage_pct,0)}%`+(O.coverage_pct<80?" (일부 업종만 입력되어 참고용)":""):"");
 }
 
 function tabs(attr, fn){ document.querySelectorAll(`[data-${attr}]`).forEach(b=>b.addEventListener("click",()=>{

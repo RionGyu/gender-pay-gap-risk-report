@@ -181,10 +181,20 @@
     "status": "no_raw_files"
    },
    "injury_micro": {
-    "status": "no_raw_files"
-   },
-   "injury_manual": {
-    "status": "not_provided"
+    "status": "ok",
+    "years": [
+     2025
+    ],
+    "manual_file[202512_광업.xlsx]": 2444,
+    "manual_file[202512_금융및보험업.xlsx]": 663,
+    "manual_file[202512_농업.xlsx]": 759,
+    "manual_file[202512_어업.xlsx]": 42,
+    "manual_file[202512_운수창고통신업.xlsx]": 17709,
+    "manual_file[202512_임업.xlsx]": 1002,
+    "manual_file[202512_전기가스증기수도사업.xlsx]": 112,
+    "rows_in": 22731,
+    "unmapped_sex": 0,
+    "rows_out": 12
    },
    "kwcs": {
     "status": "not_provided"
@@ -848,13 +858,15 @@
   "total_pct": 26.2,
   "contrib_log": {
    "segregation": -0.0145,
-   "human_capital": 0.1548,
+   "human_capital": 0.0122,
+   "tenure": 0.1426,
    "working_time": 0.0103,
    "_year": -0.0008
   },
   "contrib_share": {
    "segregation": -4.8,
-   "human_capital": 50.9,
+   "human_capital": 4.0,
+   "tenure": 46.9,
    "working_time": 3.4,
    "_year": -0.3
   },
@@ -889,5 +901,208 @@
    2024,
    2025
   ]
+ },
+ "bubble": [
+  {
+   "year": 2025,
+   "ind": "A",
+   "name": "농림어업",
+   "sex": "F",
+   "workers": 9064.0,
+   "hourly": 19698.0,
+   "injury_rate": 220.65,
+   "fatal_rate": 2.207,
+   "overtime_h": 6.4
+  },
+  {
+   "year": 2025,
+   "ind": "A",
+   "name": "농림어업",
+   "sex": "M",
+   "workers": 24728.0,
+   "hourly": 23378.0,
+   "injury_rate": 565.76,
+   "fatal_rate": 11.728,
+   "overtime_h": 8.5
+  },
+  {
+   "year": 2025,
+   "ind": "B",
+   "name": "광업",
+   "sex": "F",
+   "workers": 1118.0,
+   "hourly": 21587.0,
+   "injury_rate": 8.94,
+   "fatal_rate": 89.445,
+   "overtime_h": 11.5
+  },
+  {
+   "year": 2025,
+   "ind": "B",
+   "name": "광업",
+   "sex": "M",
+   "workers": 8532.0,
+   "hourly": 28223.0,
+   "injury_rate": 131.27,
+   "fatal_rate": 466.479,
+   "overtime_h": 22.5
+  },
+  {
+   "year": 2025,
+   "ind": "D",
+   "name": "전기·가스",
+   "sex": "F",
+   "workers": 12795.0,
+   "hourly": 37294.0,
+   "injury_rate": 6.25,
+   "fatal_rate": 0.0,
+   "overtime_h": 3.1
+  },
+  {
+   "year": 2025,
+   "ind": "D",
+   "name": "전기·가스",
+   "sex": "M",
+   "workers": 50728.0,
+   "hourly": 45303.0,
+   "injury_rate": 16.16,
+   "fatal_rate": 0.789,
+   "overtime_h": 9.2
+  },
+  {
+   "year": 2025,
+   "ind": "H",
+   "name": "운수·창고",
+   "sex": "F",
+   "workers": 128141.0,
+   "hourly": 25896.0,
+   "injury_rate": 124.86,
+   "fatal_rate": 0.39,
+   "overtime_h": 9.6
+  },
+  {
+   "year": 2025,
+   "ind": "H",
+   "name": "운수·창고",
+   "sex": "M",
+   "workers": 459583.0,
+   "hourly": 26227.0,
+   "injury_rate": 320.38,
+   "fatal_rate": 5.614,
+   "overtime_h": 16.3
+  },
+  {
+   "year": 2025,
+   "ind": "J",
+   "name": "정보통신",
+   "sex": "F",
+   "workers": 214334.0,
+   "hourly": 29063.0,
+   "injury_rate": 0.51,
+   "fatal_rate": 0.0,
+   "overtime_h": 5.1
+  },
+  {
+   "year": 2025,
+   "ind": "J",
+   "name": "정보통신",
+   "sex": "M",
+   "workers": 420271.0,
+   "hourly": 38134.0,
+   "injury_rate": 4.05,
+   "fatal_rate": 0.024,
+   "overtime_h": 5.8
+  },
+  {
+   "year": 2025,
+   "ind": "K",
+   "name": "금융·보험",
+   "sex": "F",
+   "workers": 222314.0,
+   "hourly": 42581.0,
+   "injury_rate": 16.87,
+   "fatal_rate": 0.135,
+   "overtime_h": 4.9
+  },
+  {
+   "year": 2025,
+   "ind": "K",
+   "name": "금융·보험",
+   "sex": "M",
+   "workers": 236262.0,
+   "hourly": 52244.0,
+   "injury_rate": 9.14,
+   "fatal_rate": 0.762,
+   "overtime_h": 5.4
+  }
+ ],
+ "oaxaca_ind": {
+  "n_cells": 415,
+  "r2": 0.955,
+  "total_log_gap": 0.0619,
+  "total_pct": 6.0,
+  "contrib_log": {
+   "segregation": -0.0316,
+   "human_capital": -0.0084,
+   "tenure": 0.0146,
+   "working_time": -0.0129,
+   "risk": -0.0433,
+   "_year": 0.0
+  },
+  "contrib_share": {
+   "segregation": -51.0,
+   "human_capital": -13.5,
+   "tenure": 23.6,
+   "working_time": -20.8,
+   "risk": -69.9,
+   "_year": 0.0
+  },
+  "unexplained_log": 0.1435,
+  "unexplained_share": 231.7,
+  "coef": {
+   "tenure": {
+    "b": 0.03187,
+    "se": 0.00329
+   },
+   "ot_share": {
+    "b": -0.56747,
+    "se": 0.46645
+   },
+   "injury_rate": {
+    "b": -0.00425,
+    "se": 0.00131
+   },
+   "female": {
+    "b": -0.14349,
+    "se": 0.0176
+   }
+  },
+  "means": {
+   "tenure": {
+    "M": 8.9606,
+    "F": 8.5021
+   },
+   "ot_share": {
+    "M": 0.0615,
+    "F": 0.0388
+   },
+   "injury_rate": {
+    "M": 13.9179,
+    "F": 3.7345
+   }
+  },
+  "years": [
+   2025
+  ],
+  "coverage_pct": 14.4,
+  "industries": [
+   "A",
+   "B",
+   "D",
+   "H",
+   "J",
+   "K"
+  ],
+  "risk_premium_pct_per_1permille": -0.42
  }
 }

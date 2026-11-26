@@ -194,7 +194,10 @@ def injury_rates(wage_ind: pd.DataFrame, inj: pd.DataFrame) -> pd.DataFrame:
     inj = inj.copy()
     inj["ind"] = inj["ind"].astype(str)
     m = w.merge(inj, on=["year", "ind", "sex"], how="inner")
-    m["injury_rate"] = 10000 * m["injured"] / m["workers"]  # 근로자 1만명당
+    num = m["accident"] if "accident" in m and m["accident"].notna().all() else m["injured"]
+    m["injury_rate"] = 10000 * num / m["workers"]  # 근로자 1만명당 사고재해자(업무상 질병 제외)
+    if "disease" in m:
+        m["disease_rate"] = 10000 * m["disease"] / m["workers"]
     if "fatal" in m:
         m["fatal_rate"] = 10000 * m["fatal"] / m["workers"]
     return m
@@ -245,6 +248,11 @@ def run(log=print) -> dict:
         groups_i["_year"] = [c for c in cells_i.columns if c.startswith("d_year")]
         res["oaxaca_ind"] = oaxaca(cells_i, groups_i)
         res["oaxaca_ind"]["years"] = [int(v) for v in iy[-3:]]
+        # 재해 자료가 포괄하는 근로자 비중(일부 업종만 입력된 경우 결과 해석 제한)
+        allw = ind[(ind["year"] == iy[-1]) & (ind["edu"] == "T") & (ind["age"] == "T") & (ind["ind"] != "T") & ind["sex"].isin(["M", "F"])]["workers"].sum()
+        covw = rates[rates["year"] == iy[-1]]["workers"].sum()
+        res["oaxaca_ind"]["coverage_pct"] = _r(100 * covw / allw) if allw else None
+        res["oaxaca_ind"]["industries"] = sorted(rates["ind"].unique().tolist())
         b = res["oaxaca_ind"]["coef"]["injury_rate"]["b"]
         res["oaxaca_ind"]["risk_premium_pct_per_1permille"] = _r(100 * (np.exp(b) - 1), 2) if b is not None else None
 

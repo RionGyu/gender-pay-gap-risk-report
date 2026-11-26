@@ -41,10 +41,20 @@
   "status": "no_raw_files"
  },
  "injury_micro": {
-  "status": "no_raw_files"
- },
- "injury_manual": {
-  "status": "not_provided"
+  "status": "ok",
+  "years": [
+   2025
+  ],
+  "manual_file[202512_광업.xlsx]": 2444,
+  "manual_file[202512_금융및보험업.xlsx]": 663,
+  "manual_file[202512_농업.xlsx]": 759,
+  "manual_file[202512_어업.xlsx]": 42,
+  "manual_file[202512_운수창고통신업.xlsx]": 17709,
+  "manual_file[202512_임업.xlsx]": 1002,
+  "manual_file[202512_전기가스증기수도사업.xlsx]": 112,
+  "rows_in": 22731,
+  "unmapped_sex": 0,
+  "rows_out": 12
  },
  "kwcs": {
   "status": "not_provided"

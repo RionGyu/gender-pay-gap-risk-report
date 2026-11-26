@@ -263,7 +263,7 @@ def clean_injury_micro(manifest: dict) -> tuple[pd.DataFrame | None, dict]:
         if not p.exists():
             continue
         df = pd.DataFrame(json.loads(p.read_text(encoding="utf-8")))
-        ycol = next((c for c in df.columns if re.search(r"연도|년도|발생년", c)), None)
+        ycol = next((c for c in df.columns if re.search(r"연도|년도|발생년|기준년월", c)), None)
         if ycol:
             df["year"] = pd.to_numeric(df[ycol].astype(str).str[:4], errors="coerce")
         else:
@@ -276,7 +276,8 @@ def clean_injury_micro(manifest: dict) -> tuple[pd.DataFrame | None, dict]:
             continue
         df = pd.read_csv(p, encoding="utf-8-sig") if p.suffix.lower() == ".csv" else pd.read_excel(p)
         df.columns = [str(c).strip() for c in df.columns]
-        ycol = next((c for c in df.columns if re.search(r"연도|년도|발생년", c)), None)
+        df = df[df.iloc[:, 0].astype(str).str.strip() != str(df.columns[0])]  # 반복 헤더 제거
+        ycol = next((c for c in df.columns if re.search(r"연도|년도|발생년|기준년월", c)), None)
         m = re.search(r"(20\d\d)", p.stem)
         df["year"] = pd.to_numeric(df[ycol].astype(str).str[:4], errors="coerce") if ycol else (int(m.group(1)) if m else np.nan)
         qa[f"manual_file[{p.name}]"] += len(df)
@@ -286,7 +287,7 @@ def clean_injury_micro(manifest: dict) -> tuple[pd.DataFrame | None, dict]:
     df = pd.concat(frames, ignore_index=True)
     qa["rows_in"] = len(df)
     col = lambda pat: next((c for c in df.columns if re.search(pat, c)), None)  # noqa: E731
-    c_big, c_mid, c_sex, c_sev, c_kind = col("대업종"), col("중업종"), col("성별"), col("재해정도"), col("재해자구분")
+    c_big, c_mid, c_sex, c_sev, c_kind = col("대업종"), col("중업종|종업종"), col("성별"), col("재해정도"), col("재해자구분|발생형태")
     c_cnt = col(r"재해자\s*수|인원|건수")
     cw = load_crosswalk()
     df["ind"] = [injury_to_ksic(b, m, cw) for b, m in zip(df[c_big].fillna(""), df[c_mid].fillna("") if c_mid else [""] * len(df))]
@@ -305,6 +306,7 @@ def clean_injury_micro(manifest: dict) -> tuple[pd.DataFrame | None, dict]:
         "fatal": g.apply(lambda x: x.loc[x["fatal"], "n"].sum()),
         "disease": g.apply(lambda x: x.loc[x["disease"], "n"].sum()),
     }).reset_index()
+    out["accident"] = out["injured"] - out["disease"]  # 사고재해만(진폐 등 퇴직 후 질병 청구 제외)
     qa["rows_out"] = len(out)
     return out, {"status": "ok", "years": sorted(out["year"].astype(int).unique().tolist()), **dict(qa)}
 
