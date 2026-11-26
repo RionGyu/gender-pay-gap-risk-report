@@ -27,8 +27,8 @@ jobs:
   pipeline:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -47,8 +47,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data docs
-          if git diff --cached --quiet; then echo "변경 없음"; else git commit -m "data: 자동 수집·리포트 갱신 ($(date -u +%Y-%m-%d))" && git push; fi
-      - uses: actions/upload-pages-artifact@v3
+          if git diff --cached --quiet; then echo "변경 없음"; exit 0; fi
+          git commit -m "data: 자동 수집·리포트 갱신 ($(date -u +%Y-%m-%d))"
+          # 실행 중 main 에 새 커밋이 올라와도 실패하지 않도록 rebase 후 재시도
+          for i in 1 2 3; do
+            git pull --rebase -X theirs origin main && git push && exit 0
+            sleep 5
+          done
+          echo "::error::데이터 커밋 푸시 실패"; exit 1
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: docs
 
