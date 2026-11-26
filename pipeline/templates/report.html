@@ -49,7 +49,7 @@ p{margin:8px 0}
 .exec li::before{content:"○ ";}
 .exec li.dash::before{content:"- ";}
 .exec li.dash{margin-left:1.2em;color:var(--ink2);font-size:14px}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0 4px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0 4px}
 .tile{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--surface)}
 .tile .lab{font-size:13px;color:var(--ink2)}
 .tile .val{font-size:26px;font-weight:650;line-height:1.25}
@@ -145,8 +145,15 @@ footer{margin-top:60px;color:var(--ink2);font-size:12.5px}
 <section id="s2">
   <h2>2. 직종 분리 효과</h2>
   {{S2_TEXT}}
+  <div class="figure" id="fig-occscatter">
+    <div class="ftitle">세부 직종별 여성 비중과 시간당 임금</div>
+    <div class="fsub">점 하나 = 직종 소분류 1개 · 크기 = 근로자 수 · 선 = 근로자 수 가중 추세(로그 임금)</div>
+    <div id="chart-occscatter"></div>
+    <details class="tbl"><summary>표로 보기</summary><div class="tbl-wrap" id="tbl-occdetail"></div></details>
+    <div class="src">자료: 고용형태별근로실태조사 직종(소분류)·성별 (KOSIS DT_118N_PAYM41), {{YEAR}}년</div>
+  </div>
   <div class="figure">
-    <div class="ftitle">직종별 여성 비중과 성별 시간당 임금</div>
+    <div class="ftitle">직종 대분류별 여성 비중과 성별 시간당 임금</div>
     <div class="fsub">여성 비중이 높은 직종부터 정렬 · 점은 성별 시간당 임금총액(원)</div>
     <div class="legend"><span><i class="sw" style="background:var(--male)"></i>남성</span><span><i class="sw" style="background:var(--female)"></i>여성</span></div>
     <div id="chart-dumbbell"></div>
@@ -156,7 +163,7 @@ footer{margin-top:60px;color:var(--ink2);font-size:12.5px}
   <div class="figure">
     <div class="ftitle">시간당 임금격차의 구성: 직종 간 분포 차이 vs 같은 직종 안의 차이</div>
     <div class="fsub">시간가중 shift-share 분해 · 단위: 원</div>
-    <div class="tabs" role="group" aria-label="분류 기준"><button type="button" data-seg="seg_occ" aria-pressed="true">직종 기준</button><button type="button" data-seg="seg_ind" aria-pressed="false">산업 기준</button></div>
+    <div class="tabs" role="group" aria-label="분류 기준"><button type="button" data-seg="seg_detail" aria-pressed="true">세부 직종(소분류)</button><button type="button" data-seg="seg_occ" aria-pressed="false">직종 대분류</button><button type="button" data-seg="seg_ind" aria-pressed="false">산업 기준</button></div>
     <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>직종(산업) 간 분포 차이</span><span><i class="sw rect" style="background:var(--female)"></i>같은 직종(산업) 안의 임금 차이</span></div>
     <div id="chart-shift"></div>
   </div>
@@ -198,7 +205,7 @@ footer{margin-top:60px;color:var(--ink2);font-size:12.5px}
   <div class="figure">
     <div class="ftitle">로그 시간당 임금격차의 요인별 기여</div>
     <div class="fsub">풀드 Oaxaca-Blinder 분해 · 단위: 로그포인트×100 (≈ %)</div>
-    <div class="tabs" role="group" aria-label="모형"><button type="button" data-wf="oaxaca_occ" aria-pressed="true">직종 모형 (주 모형)</button><button type="button" data-wf="oaxaca_ind" aria-pressed="false">산업 모형 (재해율 포함)</button></div>
+    <div class="tabs" role="group" aria-label="모형"><button type="button" data-wf="oaxaca_detail" aria-pressed="true">세부 직종 모형 (주 모형)</button><button type="button" data-wf="oaxaca_occ" aria-pressed="false">대분류×학력×연령 모형</button><button type="button" data-wf="oaxaca_ind" aria-pressed="false">산업 모형 (재해율 포함)</button></div>
     <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>전체·잔여 격차</span><span><i class="sw rect" style="background:var(--pos)"></i>격차를 키우는 요인</span><span><i class="sw rect" style="background:var(--neg)"></i>격차를 줄이는 요인</span></div>
     <div id="chart-waterfall"></div>
     <details class="tbl"><summary>표로 보기 (계수 포함)</summary><div class="tbl-wrap" id="tbl-wf"></div></details>
@@ -285,6 +292,48 @@ function trend(){
   hit.addEventListener("pointerleave",()=>cross.setAttribute("opacity",0));
 }
 
+
+
+// 겹치는 라벨은 건너뛰고(툴팁·표에 값이 남음), 오른쪽 끝에서는 왼쪽에 붙임
+function placeLabels(s, items, W){
+  const boxes=[]; const cw=11.5;
+  items.sort((a,b)=>a.y-b.y).forEach(it=>{
+    const w=it.text.length*cw; let left=it.x+it.r+3, anchor="start";
+    if(left+w>W-4){ left=it.x-it.r-3-w; anchor="end"; }
+    const box={x0:left,x1:left+w,y0:it.y-9,y1:it.y+5};
+    if(boxes.some(b=>!(box.x1<b.x0||box.x0>b.x1||box.y1<b.y0||box.y0>b.y1))) return;
+    boxes.push(box); txt(s,anchor==="start"?left:it.x-it.r-3,it.y+4,it.text,{class:"lab-strong","font-size":11,"text-anchor":anchor});
+  });
+}
+// ---------------------------------------------------------------- 2-0. 세부 직종 산점도
+function occScatter(){
+  const S=D.seg_detail; if(!S){ document.getElementById("fig-occscatter").style.display="none"; return; }
+  const rows=S.rows.filter(r=>r.hourly_all>0);
+  const W=900,H=460,m={l:64,r:24,t:36,b:46}; const s=svg("chart-occscatter",W,H);
+  const ws=rows.map(r=>(r.emp_share_f||0)+(r.emp_share_m||0)); const wmax=Math.max(...ws);
+  const ys=rows.map(r=>r.hourly_all); const st=nice((Math.max(...ys)-Math.min(...ys))/5);
+  const ylo=Math.max(0,Math.floor(Math.min(...ys)/st)*st), yhi=Math.ceil(Math.max(...ys)/st)*st;
+  const x=v=>m.l+v/100*(W-m.l-m.r), y=v=>m.t+(yhi-v)/(yhi-ylo)*(H-m.t-m.b), rad=w=>3+Math.sqrt(w/wmax)*18;
+  ticks(0,100,5).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:css("--grid")},s); txt(s,x(v),H-m.b+18,v+"%",{"text-anchor":"middle"}); });
+  ticks(ylo,yhi,5).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:css("--grid")},s); txt(s,m.l-8,y(v)+4,fmt(v/10000,1)+"만",{"text-anchor":"end"}); });
+  txt(s,(m.l+W-m.r)/2,H-6,"직종 내 여성 비중",{"text-anchor":"middle"}); txt(s,m.l-8,m.t-18,"시간당 임금(원)",{});
+  // 가중 회귀 ln(w) = a + b·여성비중
+  let sw=0,sx=0,sy=0,sxx=0,sxy=0; rows.forEach((r,i)=>{const w=ws[i],xv=r.female_share,yv=Math.log(r.hourly_all); sw+=w;sx+=w*xv;sy+=w*yv;sxx+=w*xv*xv;sxy+=w*xv*yv;});
+  const b=(sw*sxy-sx*sy)/(sw*sxx-sx*sx), a=(sy-b*sx)/sw;
+  el("path",{d:[0,25,50,75,100].map((v,i)=>(i?"L":"M")+x(v)+","+y(Math.exp(a+b*v))).join(""),fill:"none",stroke:css("--ink2"),"stroke-width":2,"stroke-dasharray":"0"},s);
+  const c="#00b894";
+  rows.map((r,i)=>({r,w:ws[i]})).sort((p,q)=>q.w-p.w).forEach(({r,w})=>{ const g=el("g",{},s);
+    el("circle",{cx:x(r.female_share),cy:y(r.hourly_all),r:rad(w),fill:c,"fill-opacity":.5,stroke:css("--surface"),"stroke-width":1.5},g);
+    el("circle",{cx:x(r.female_share),cy:y(r.hourly_all),r:Math.max(12,rad(w)),fill:"transparent"},g);
+    hover(g,e=>showTip(e,r.name,[{value:fmt(r.hourly_all)+"원",label:"시간당 임금",color:c},{value:fmt(r.female_share,1)+"%",label:"여성 비중"},{value:fmt(r.ratio,1)+"%",label:"여성/남성 시급"}])); });
+  const lab=new Set();
+  rows.filter(r=>r.female_share>=70).sort((p,q)=>(q.emp_share_f||0)-(p.emp_share_f||0)).slice(0,5).forEach(r=>lab.add(r));
+  rows.filter(r=>r.female_share<=20).sort((p,q)=>(q.emp_share_m||0)-(p.emp_share_m||0)).slice(0,3).forEach(r=>lab.add(r));
+  [...rows].sort((p,q)=>q.hourly_all-p.hourly_all).slice(0,2).forEach(r=>lab.add(r));
+  placeLabels(s,[...lab].map(r=>{ const w=(r.emp_share_f||0)+(r.emp_share_m||0); return {x:x(r.female_share),y:y(r.hourly_all),r:rad(w),text:r.name}; }),W);
+  table("tbl-occdetail",["직종(소분류)","여성 비중(%)","시간당 임금","남성","여성","여성/남성(%)"],
+    [...rows].sort((p,q)=>q.female_share-p.female_share).map(r=>[r.name,fmt(r.female_share,1),fmt(r.hourly_all),fmt(r.hourly_m),fmt(r.hourly_f),fmt(r.ratio,1)]));
+}
 // ---------------------------------------------------------------- 2. 덤벨 (직종별 남녀 시급)
 function dumbbell(){
   const rows=D.seg_occ.rows; const W=900,rowH=34,m={l:150,r:70,t:20,b:28}; const H=m.t+m.b+rows.length*rowH;
@@ -379,7 +428,7 @@ function bubble(){
   // 선택적 직접 라벨: 남성 재해율 상위 4개 + 여성 비중 큰 산업 2개
   const males=B.filter(b=>b.sex==="M").sort((a,b)=>b.injury_rate-a.injury_rate).slice(0,4);
   const fems=B.filter(b=>b.sex==="F").sort((a,b)=>b.workers-a.workers).slice(0,2);
-  [...males,...fems].forEach(b=>txt(s,x(b.injury_rate)+rad(b.workers)+4,y(b.hourly)+4,b.name,{class:"lab-strong","font-size":11.5}));
+  placeLabels(s,[...males,...fems].map(b=>({x:x(b.injury_rate),y:y(b.hourly),r:rad(b.workers),text:b.name+(b.sex==="M"?" 남":" 여")})),W);
   table("tbl-bubble",["산업","성별","시간당 임금","재해율(1만명당)","사망률(1만명당)","근로자 수"],
     [...B].sort((a,b)=>a.ind.localeCompare(b.ind)||a.sex.localeCompare(b.sex)).map(b=>[b.name,b.sex==="M"?"남":"여",fmt(b.hourly),fmt(b.injury_rate,2),fmt(b.fatal_rate,3),fmt(b.workers)]));
 }
@@ -413,8 +462,9 @@ function waterfall(key){
 
 function tabs(attr, fn){ document.querySelectorAll(`[data-${attr}]`).forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(`[data-${attr}]`).forEach(o=>o.setAttribute("aria-pressed",o===b?"true":"false")); fn(b.dataset[attr]); })); }
-function renderAll(){ trend(); dumbbell(); shift(document.querySelector('[data-seg][aria-pressed="true"]').dataset.seg); components(); overtime(); bubble();
-  const wf=document.querySelector('[data-wf][aria-pressed="true"]').dataset.wf; waterfall(D[wf]?wf:"oaxaca_occ"); }
+function renderAll(){ trend(); occScatter(); dumbbell(); components(); overtime(); bubble();
+  const wf=document.querySelector('[data-wf][aria-pressed="true"]').dataset.wf; waterfall(D[wf]?wf:"oaxaca_occ");
+  const sg=document.querySelector('[data-seg][aria-pressed="true"]').dataset.seg; shift(D[sg]?sg:"seg_occ"); }
 tabs("seg", shift); tabs("wf", waterfall);
 if(!D.oaxaca_ind){ const b=document.querySelector('[data-wf="oaxaca_ind"]'); b.disabled=true; b.title="재해 자료 미수집"; document.querySelector('[data-wf="oaxaca_occ"]').setAttribute("aria-pressed","true"); b.setAttribute("aria-pressed","false"); }
 document.getElementById("themeBtn").addEventListener("click",()=>{ const r=document.documentElement; const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme=dark?"light":"dark"; renderAll(); });

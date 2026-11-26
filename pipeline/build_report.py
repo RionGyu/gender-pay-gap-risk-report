@@ -40,12 +40,16 @@ def li(items, cls=""):
 def build(res: dict) -> str:
     H, S = res["headline"], res["seg_occ"]
     SI = res.get("seg_ind")
-    O = res["oaxaca_occ"]                      # 주 모형: 직종(전 산업 포괄)
+    OM = res["oaxaca_occ"]                     # 직종 대분류×학력×연령 모형(학력·연령 효과 확인용)
+    O = res.get("oaxaca_detail") or OM         # 주 모형: 세부 직종(소분류) 고정효과 = 같은 직무 비교
+    SD = res.get("seg_detail") or S            # 세부 직종 기준 분리 효과
     OI = res.get("oaxaca_ind")                 # 보조 모형: 산업 + 산업×성별 재해율
     if OI and (OI.get("coverage_pct") or 0) < 80:
         OI = None                              # 재해 자료가 일부 업종뿐이면 요약 수치에 쓰지 않음
     cs = O["contrib_share"]
-    seg_sh, hc_sh, ten_sh, wt_sh = cs.get("segregation"), cs.get("human_capital"), cs.get("tenure"), cs.get("working_time")
+    seg_sh, ten_sh, wt_sh = cs.get("segregation"), cs.get("tenure"), cs.get("working_time")
+    hc_sh = OM["contrib_share"].get("human_capital")
+    n_occ = SD.get("n_occ") or len(SD["rows"])
     sn_sh, un_sh = cs.get("shift_night"), O["unexplained_share"]
     risk_sh = OI["contrib_share"].get("risk") if OI else None
     risk_c = OI["coef"].get("injury_rate") if OI else None
@@ -57,18 +61,19 @@ def build(res: dict) -> str:
     first = trend[0] if trend else None
     sample = res["meta"].get("sample_data")
     burden = (wt_sh or 0) + (risk_sh or 0) + (sn_sh or 0)
-    seg_small = (S["between_pct"] or 0) < 15
+    seg_small = (SD["between_pct"] or 0) < 15
     worst_ind = min(SI["rows"], key=lambda r: r["ratio"]) if SI else None
     worst_occ = min(S["rows"], key=lambda r: r["ratio"])
-    blocks = {"근속 차이(경력단절)": ten_sh or 0, "직종 분리": max(seg_sh or 0, 0),
+    blocks = {"근속 차이(경력단절)": ten_sh or 0, "세부 직종 분리": max(seg_sh or 0, 0),
               "초과근로·위험 등 근무부담": burden, "설명되지 않는 동일 조건 내 격차": un_sh or 0}
     order = sorted(blocks, key=lambda k: -blocks[k])
 
     tiles = f"""<div class="tiles">
   <div class="tile"><div class="lab">여성 시간당 임금 (남성=100)</div><div class="val">{f1(H['hourly_ratio'])}</div><div class="note">{year}년 · 월임금총액 기준 {f1(H['monthly_ratio'])}</div></div>
-  <div class="tile"><div class="lab">근속 차이로 설명되는 몫</div><div class="val">{f0(ten_sh)}%</div><div class="note">평균 근속 남 {f1(ten_m)}년 · 여 {f1(ten_f)}년</div></div>
-  <div class="tile"><div class="lab">초과근로·위험 노출로 설명되는 몫</div><div class="val">{f0(burden)}%</div><div class="note">초과근로 {f1(wt_sh)}%{f' · 재해위험 {f1(risk_sh)}%' if risk_sh is not None else ''}</div></div>
-  <div class="tile"><div class="lab">설명되지 않는 격차</div><div class="val">{f0(un_sh)}%</div><div class="note">같은 직종·학력·연령·근속·초과근로 조건</div></div>
+  <div class="tile"><div class="lab">직종 분리로 설명</div><div class="val">{f0(seg_sh)}%</div><div class="note">세부 직종 {n_occ}개 기준</div></div>
+  <div class="tile"><div class="lab">근속 차이로 설명</div><div class="val">{f0(ten_sh)}%</div><div class="note">평균 근속 남 {f1(ten_m)}년 · 여 {f1(ten_f)}년</div></div>
+  <div class="tile"><div class="lab">초과근로·위험으로 설명</div><div class="val">{f0(burden)}%</div><div class="note">초과근로 {f1(wt_sh)}%{f' · 재해위험 {f1(risk_sh)}%' if risk_sh is not None else ''}</div></div>
+  <div class="tile"><div class="lab">설명되지 않는 격차</div><div class="val">{f0(un_sh)}%</div><div class="note">같은 세부 직종·근속·초과근로 조건</div></div>
 </div>"""
 
     trend_sent = ""
@@ -76,13 +81,9 @@ def build(res: dict) -> str:
         d = H["hourly_ratio"] - first["ratio"]
         trend_sent = f" {first['year']}년({f1(first['ratio'])}%) 대비 {abs(d):.1f}%p {'좁혀졌으나 여전히 큰 격차' if d > 0 else '벌어진 상태'}"
 
-    if seg_small:
-        seg_txt = (f"<b>(직종 분리)</b> 남녀 직종 분포는 다르지만(던컨 분리지수 {f1(S['duncan_index'])}), 여성 비중이 높은 사무·전문가 직종의 임금이 평균 이상이어서 "
-                   f"직종 대분류 간 분포 차이로 설명되는 몫은 <b>{f0(S['between_pct'])}%</b>에 불과. 격차는 대부분 <b>같은 직종 안에서</b> 발생"
-                   + (f"(예: {e(worst_ind['name'])}업 여성 시급은 남성의 {f0(worst_ind['ratio'])}%)" if worst_ind else ""))
-    else:
-        seg_txt = (f"<b>(직종 분리)</b> 남녀의 직종 분포 차이(던컨 분리지수 {f1(S['duncan_index'])})가 시간당 임금격차의 <b>{f0(S['between_pct'])}%</b>를 설명. "
-                   f"여성 비중이 10%p 높은 직종일수록 평균 시간당 임금이 {f1(abs(S['female_share_wage_slope_pct_per10pp']))}% 낮음")
+    seg_txt = (f"<b>(직종 분리)</b> {n_occ}개 세부 직종 기준 남녀 분포 차이가 매우 크고(던컨 분리지수 {f1(SD['duncan_index'])}), "
+               f"여성 비중이 10%p 높은 직종일수록 시간당 임금이 {f1(abs(SD['female_share_wage_slope_pct_per10pp']))}% 낮음. 직종 분포 차이가 격차의 <b>{f0(seg_sh)}%</b>를 설명"
+               + (f"(직종 대분류 9개로 보면 {f0(S['between_pct'])}%로 상쇄되어 보이지 않음)" if SD is not S else ""))
     risk_txt = ""
     if risk_sh is not None:
         risk_txt = (f", 같은 산업 안 남녀의 재해위험 차이는 <b>{f1(risk_sh)}%</b>"
@@ -97,15 +98,15 @@ def build(res: dict) -> str:
 <div class="box-title">□ 데이터 분석 결과</div>
 {li([
     seg_txt,
-    f"<b>(근속·경력)</b> 같은 직종·학력·연령대 안에서도 여성의 평균 근속이 짧아({f1(ten_f)}년 vs {f1(ten_m)}년) 격차의 <b>{f0(ten_sh)}%</b>를 설명 → 출산·육아기 경력단절이 근속 연동 임금체계를 통해 임금격차로 이어짐",
+    f"<b>(근속·경력)</b> 같은 세부 직종 안에서도 여성의 평균 근속이 짧아({f1(ten_f)}년 vs {f1(ten_m)}년) 격차의 <b>{f0(ten_sh)}%</b>를 설명 → 출산·육아기 경력단절이 근속 연동 임금체계를 통해 임금격차로 이어짐",
     f"<b>(근무부담 보상)</b> 초과근로 비중 차이는 격차의 <b>{f1(wt_sh)}%</b>{risk_txt}만 설명 → ‘위험·장시간 노동 보상’ 가설로 설명되는 부분은 작음" + (f", 교대·야간근무 차이는 {f1(sn_sh)}%" if sn_sh is not None else ""),
-    f"<b>(동일 조건 내 격차)</b> 같은 직종·학력·연령대·근속·초과근로 조건을 맞춰도 격차의 <b>{f0(un_sh)}%</b>가 남음 → 동일노동 동일임금 점검이 필요한 영역",
+    f"<b>(동일 조건 내 격차)</b> 같은 세부 직종·근속·초과근로 조건을 맞춰도 격차의 <b>{f0(un_sh)}%</b>가 남음 → 동일노동 동일임금 점검이 필요한 영역",
 ])}
 <div class="box-title">□ 정책 제언</div>
 {li([
     f"<b>(경력단절 예방·근속 격차 완화)</b> 육아휴직·근로시간 단축 기간의 근속·호봉 인정 의무화 점검, 남성 육아휴직 확대로 경력단절의 성별 편중 완화 <span class='kicker'>고용노동부·성평등가족부</span>",
     "<b>(동일노동 동일임금 점검)</b> 동일 조건 내 잔여 격차를 매년 같은 방식으로 산출해 성별임금 공시·적극적고용개선조치(AA) 사업장 점검 지표로 활용 <span class='kicker'>고용노동부</span>",
-    "<b>(직무가치 재평가)</b> 같은 직종 안에서 여성이 몰린 하위 직무(예: 보건·복지의 돌봄·간호 보조)의 가치를 숙련·책임·노력·작업조건 기준으로 재평가, 사회서비스 임금 가이드라인부터 적용 <span class='kicker'>성평등가족부·고용노동부</span>",
+    "<b>(직무가치 재평가)</b> 여성 집중 직무(돌봄·보건 서비스, 사회복지, 보건의료 보조, 청소 등)의 가치를 숙련·책임·노력·작업조건 기준으로 재평가, 사회서비스 임금 가이드라인부터 적용 <span class='kicker'>성평등가족부·고용노동부</span>",
     "<b>(안전보건·근로시간)</b> 위험·장시간 노동에 대한 임금 보상은 격차의 작은 부분 → 위험수당보다 고위험 업종의 재해 자체를 줄이는 투자, 초과근로 의존 임금구조 개선이 우선 <span class='kicker'>고용노동부·한국산업안전보건공단</span>",
     "<b>(통계 인프라)</b> 임금 통계의 직종 중·소분류×성별 공표, 산재통계의 직종×성별 공표로 같은 직무 단위 비교 가능하게 <span class='kicker'>국가데이터처</span>",
 ])}
@@ -119,12 +120,11 @@ def build(res: dict) -> str:
                         f"{f1(100 * H[k]['F'] / H[k]['M']) + '%' if H[k]['M'] and H[k]['F'] is not None else '–'}</td></tr>" for lab, k, fn in rows) +
                 "</table></div>")
 
-    top_f = [r for r in S["rows"] if r["female_share"] >= 45]
-    s2_text = f"""<p>남녀 직종 분포가 얼마나 다른지 보여주는 <b>던컨 분리지수는 {f1(S['duncan_index'])}</b>입니다(여성 또는 남성의 {f1(S['duncan_index'])}%가 직종을 옮겨야 분포가 같아진다는 뜻). 여성 비중이 높은 직종은 {', '.join(e(r['name']) for r in top_f[:4]) or '–'}입니다.</p>
-<p>시간당 임금격차 {f0(S['gap_won'])}원을 <b>직종 간 분포 차이</b>와 <b>같은 직종 안의 임금 차이</b>로 나누면 각각 <b>{f0(S['between_pct'])}%</b>와 <b>{f0(S['within_pct'])}%</b>입니다{f" (산업 기준 {f0(SI['between_pct'])}%와 {f0(SI['within_pct'])}%)" if SI else ''}. """ + (
-        f"여성이 저임금 서비스·단순노무에도 많지만 상대적으로 임금이 높은 사무·전문가 직종에도 많아, 직종 대분류 수준의 ‘분포 차이’는 서로 상쇄됩니다. 격차는 직종을 고르는 단계보다 <b>같은 직종 안의 직무·직급·근속 차이</b>에서 생깁니다. 직종 내 여성/남성 임금 비율이 가장 낮은 곳은 {e(worst_occ['name'])}({f0(worst_occ['ratio'])}%){f', 산업 중에서는 {e(worst_ind["name"])}({f0(worst_ind["ratio"])}%)' if worst_ind else ''}입니다.</p>"
-        if seg_small else "직종 선택의 차이가 격차의 상당 부분을 차지합니다.</p>") + """
-<div class="callout">직종 대분류(9개)는 의사와 요양보호사를 같은 ‘전문가·서비스’로 묶을 만큼 넓습니다. 따라서 이 결과는 ‘직종 분리 효과가 없다’가 아니라 <b>대분류 수준에서는 보이지 않고 그 안의 세부 직무 위계로 숨어 있다</b>로 읽어야 하며, 직종 중·소분류×성별 임금 통계 공표가 필요한 이유입니다.</div>"""
+    big_f = sorted([r for r in SD["rows"] if r["female_share"] >= 70], key=lambda r: -(r["emp_share_f"] or 0))[:4]
+    big_m = sorted([r for r in SD["rows"] if r["female_share"] <= 20], key=lambda r: -(r["emp_share_m"] or 0))[:3]
+    s2_text = f"""<p>세부 직종 {n_occ}개(한국표준직업분류 소분류) 기준으로 남녀 직종 분포가 얼마나 다른지 보여주는 <b>던컨 분리지수는 {f1(SD['duncan_index'])}</b>입니다. 여성 또는 남성의 {f1(SD['duncan_index'])}%가 직종을 옮겨야 분포가 같아진다는 뜻으로, 일하는 직종 자체가 크게 갈려 있습니다. 여성이 많이 일하는 직종은 {', '.join(f"{e(r['name'])}(여성 {f0(r['female_share'])}%)" for r in big_f)}이고, 남성이 많은 직종은 {', '.join(e(r['name']) for r in big_m)}입니다.</p>
+<p>시간당 임금격차를 <b>직종 간 분포 차이</b>와 <b>같은 직종 안의 임금 차이</b>로 나누면 각각 <b>{f0(SD['between_pct'])}%</b>와 <b>{f0(SD['within_pct'])}%</b>입니다. 여성 비중이 10%p 높은 직종일수록 시간당 임금은 평균 {f1(abs(SD['female_share_wage_slope_pct_per10pp']))}% 낮습니다.</p>""" + (f"""
+<div class="callout">같은 계산을 직종 대분류 9개로 하면 분포 차이의 몫이 {f0(S['between_pct'])}%로 사라집니다. 대분류는 의사와 간호조무사(둘 다 ‘전문가 및 관련 종사자’), 경영 관련 사무원과 사무 보조원을 같은 범주로 묶기 때문입니다. 직종 분리 효과는 <b>대분류에서는 상쇄되어 보이지 않고 세부 직무 수준에서 드러난다</b>는 점이 이 분석의 핵심 발견 중 하나이며, 세부 직종×성별 통계 공표가 정책 분석에 꼭 필요한 이유입니다.</div>""" if SD is not S else "")
 
     comp = S["monthly_gap_components"]
     tot_comp = sum(v for v in comp.values() if v is not None) or 1
@@ -142,15 +142,16 @@ def build(res: dict) -> str:
     else:
         s4_text = "<p>산업재해 자료가 아직 수집되지 않았습니다.</p>"
 
-    s5_text = f"""<p>직종×학력×연령×성별 셀(최근 3개년)을 근로자 수로 가중한 회귀모형으로 로그 시간당 임금을 설명하고, 남녀 평균 특성 차이에 계수를 곱해 격차를 요인별로 나눴습니다(풀드 Oaxaca-Blinder). 빨간 막대는 격차를 키우는 요인, 파란 막대는 줄이는 요인이고, 마지막 회색 막대가 같은 조건에서도 설명되지 않는 격차입니다.</p>
-<p>직종 모형에서 격차의 <b>{f0(ten_sh)}%는 근속 차이</b>, {f1(wt_sh)}%는 초과근로 비중, {f1(hc_sh)}%는 학력·연령, {f1(seg_sh)}%는 직종 분포로 설명되고, <b>{f0(un_sh)}%는 설명되지 않습니다.</b>""" + (
-        f" 산업 모형(산업×성별 재해율 포함)에서 재해위험 노출의 기여는 {f1(risk_sh)}%입니다." if risk_sh is not None else "") + """ 설명되지 않는 부분은 곧 차별을 뜻하지는 않습니다(세부 직무·직급, 측정되지 않은 요인 포함). 다만 정책적으로는 동일노동 동일임금 점검이 필요한 영역의 상한으로 읽을 수 있습니다.</p>"""
+    s5_text = f"""<p>세부 직종×성별 셀(최근 3개년, {O.get('n_occ', n_occ)}개 직종)을 근로자 수로 가중한 회귀모형으로 로그 시간당 임금을 설명했습니다. 직종 고정효과를 넣었으므로 근속·초과근로·여성 효과는 모두 <b>같은 세부 직종 안</b>에서 비교한 값입니다. 남녀 평균 특성 차이에 계수를 곱해 격차를 요인별로 나눴습니다(풀드 Oaxaca-Blinder). 빨간 막대는 격차를 키우는 요인, 파란 막대는 줄이는 요인이고, 마지막 회색 막대가 같은 조건에서도 설명되지 않는 격차입니다.</p>
+<p>격차의 <b>{f0(seg_sh)}%는 직종 분리</b>, <b>{f0(ten_sh)}%는 근속 차이</b>, {f1(wt_sh)}%는 초과근로 비중으로 설명되고, <b>{f0(un_sh)}%는 설명되지 않습니다.</b> 근속 1년당 시간당 임금은 약 {f1(100 * (O['coef']['tenure']['b'] or 0))}% 높습니다.""" + (
+        f" 학력·연령을 함께 넣은 직종 대분류 모형에서 학력·연령의 기여는 {f1(hc_sh)}%로, 여성의 학력 구성은 격차를 키우지 않습니다." if hc_sh is not None else "") + (
+        f" 산업×성별 재해율을 넣은 산업 모형에서 재해위험 노출의 기여는 {f1(risk_sh)}%입니다." if risk_sh is not None else "") + """ 설명되지 않는 부분이 곧 차별을 뜻하지는 않습니다(직급·사업체 규모·측정되지 않은 요인 포함). 다만 정책적으로는 동일노동 동일임금 점검이 필요한 영역의 상한으로 읽을 수 있습니다.</p>"""
 
     s6_text = f"""<div class="card tbl-wrap"><table class="policy">
 <tr><th>격차 원인</th><th>근거 지표</th><th>정책 수단</th><th>소관</th></tr>
 <tr><td><b>근속 차이(경력단절)</b></td><td>근속 기여 {f0(ten_sh)}%, 평균 근속 남 {f1(ten_m)}년 / 여 {f1(ten_f)}년</td><td>육아휴직·단축근무 기간 근속·호봉 인정 점검, 남성 육아휴직 확대, 경력 인정형 재취업 지원</td><td>고용노동부, 성평등가족부</td></tr>
 <tr><td><b>설명되지 않는 격차</b></td><td>동일 조건 잔여 {f0(un_sh)}%</td><td>성별임금 공시 확대, AA 사업장 점검지표화, 임금 결정 투명성 강화</td><td>고용노동부, 성평등가족부</td></tr>
-<tr><td><b>직종 내 직무 위계·저평가</b></td><td>직종 간 분포 차이 {f0(S['between_pct'])}% / 직종 내 {f0(S['within_pct'])}%{f", {e(worst_ind['name'])} 여성 시급 {f0(worst_ind['ratio'])}%" if worst_ind else ''}</td><td>직무가치 평가도구 보급, 사회서비스 임금 가이드라인, 돌봄·보조 직무 숙련 인정</td><td>성평등가족부, 고용노동부</td></tr>
+<tr><td><b>직종 분리·여성 직무 저평가</b></td><td>직종 분리 기여 {f0(seg_sh)}%, 던컨 지수 {f1(SD['duncan_index'])}, 여성비중 10%p당 시급 {f1(SD['female_share_wage_slope_pct_per10pp'])}%</td><td>직무가치 평가도구 보급, 사회서비스 임금 가이드라인, 돌봄·보조 직무 숙련 인정</td><td>성평등가족부, 고용노동부</td></tr>
 <tr><td><b>근무부담(초과근로)</b></td><td>초과근로 기여 {f1(wt_sh)}%, 남 {f1(ot_m)}h / 여 {f1(ot_f)}h</td><td>기본급 중심 임금체계 개편, 장시간 근로 의존 해소</td><td>고용노동부</td></tr>
 <tr><td><b>위험 노출</b></td><td>{f"재해위험 기여 {f1(risk_sh)}%, 재해율 1‰p당 임금 {f1(prem)}%" if risk_sh is not None else '산재 자료 수집 후 산출'}</td><td>위험수당보다 위험 자체 감소: 고위험 업종 안전보건 투자, 여성 진입 시 작업환경·보호구 개선</td><td>고용노동부, 한국산업안전보건공단</td></tr>
 <tr><td><b>통계 공백</b></td><td>임금 직종 대분류만 성별 공표, 산재 직종×성별 미공표</td><td>직종 중·소분류×성별 임금, 직종×성별 재해 통계 공표, 근로환경조사-임금 연계</td><td>국가데이터처</td></tr>

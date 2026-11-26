@@ -187,6 +187,40 @@ def build_cells(df: pd.DataFrame, dim: str, extra: pd.DataFrame | None = None, e
     return d, groups
 
 
+# ------------------------------------------------------------------ 세부 직종(소분류)
+def detail_analysis(det: pd.DataFrame, year: int) -> dict:
+    import re
+    d = det.copy()
+    d["occ"] = d["occ"].astype(str)
+    d["edu"], d["age"] = "T", "T"
+    leaf = d[d["occ"].str.fullmatch(r"\d{3}")]
+    labels = {r.occ: re.sub(r"\s*\(\s*\d+\s*\)\s*$", "", str(r.occ_label)).replace("∙", "·") for r in leaf.drop_duplicates("occ").itertuples()}
+    y = int(leaf["year"].max())
+    out = {}
+    seg = segregation(leaf, "occ", y, labels)
+    tot = d[(d["occ"] == "T") & (d["year"] == y) & d["sex"].isin(["M", "F"])]["workers"].sum()
+    seg["coverage_pct"] = _r(100 * leaf[(leaf["year"] == y) & leaf["sex"].isin(["M", "F"])]["workers"].sum() / tot) if tot else None
+    seg["n_occ"] = len(seg["rows"])
+    out["seg_detail"] = seg
+    # 셀(소분류×성) 가중 회귀: 직종 고정효과 + 근속 + 초과근로 비중 + 여성
+    c = leaf[(leaf["year"] >= y - 2) & leaf["sex"].isin(["M", "F"])].dropna(subset=["hourly_wage", "workers", "tenure", "hours_overtime", "hours_total"]).copy()
+    c = c[(c["hourly_wage"] > 0) & (c["workers"] > 0)]
+    c["lnw"] = np.log(c["hourly_wage"])
+    c["ot_share"] = c["hours_overtime"] / c["hours_total"]
+    groups = {}
+    for col, g in (("occ", "segregation"), ("year", "_year")):
+        dums = pd.get_dummies(c[col].astype(str), prefix=f"d_{col}", drop_first=True, dtype=float)
+        c = pd.concat([c, dums], axis=1)
+        groups[g] = dums.columns.tolist()
+    groups["tenure"] = ["tenure"]
+    groups["working_time"] = ["ot_share"]
+    o = oaxaca(c, groups)
+    o["years"] = sorted(int(v) for v in c["year"].unique())
+    o["n_occ"] = int(c["occ"].nunique())
+    out["oaxaca_detail"] = o
+    return out
+
+
 # ------------------------------------------------------------------ E. 산업×성 재해율
 def injury_rates(wage_ind: pd.DataFrame, inj: pd.DataFrame) -> pd.DataFrame:
     w = wage_ind[(wage_ind["edu"] == "T") & (wage_ind["age"] == "T") & (wage_ind["ind"] != "T") & wage_ind["sex"].isin(["M", "F"])]
@@ -215,6 +249,11 @@ def run(log=print) -> dict:
     res["seg_occ"] = segregation(occ, "occ", year, SHORT_OCC)
     if ind is not None:
         res["seg_ind"] = segregation(ind, "ind", int(ind["year"].max()), SHORT_IND)
+
+    # B-2/D-0. 세부 직종(소분류 3자리) — 같은 직무 단위 비교
+    det = _read("wage_occ_detail")
+    if det is not None:
+        res.update(detail_analysis(det, year))
 
     # D-1. 직종 모형 (최근 3개년 풀링, 연도 더미)
     occ_recent = occ[occ["year"] >= year - 2]

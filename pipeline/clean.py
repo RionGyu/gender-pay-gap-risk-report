@@ -86,8 +86,12 @@ _KSIC_KEYS.update(_KSIC_ALIASES)
 
 
 def map_occ(label: str) -> str | None:
+    """직종 라벨 → KSCO 코드. '간호사(243)'처럼 코드가 붙은 세부 직종은 그 코드(소분류 3자리)를 그대로 씁니다."""
     if str(label).strip() in TOTAL_LABELS:
         return "T"
+    m = re.search(r"\(\s*(\d{1,3})\s*\)\s*$", str(label))
+    if m:
+        return m.group(1)
     m = re.match(r"^\s*(?:\(([1-9])\)|([1-9])[\.\s])", str(label))
     key = norm_text(label)
     if key in _KSCO_KEYS:
@@ -197,6 +201,10 @@ def standardize(df: pd.DataFrame, qa: Counter) -> pd.DataFrame:
         df = df.drop_duplicates(keys + ["item"], keep="last")
     wide = df.pivot_table(index=keys, columns="item", values="value", aggfunc="first").reset_index()
     wide.columns.name = None
+    for dim in ("occ", "ind"):  # 코드별 최신 라벨 보존
+        if f"{dim}_label" in df:
+            lab = df.sort_values("year").drop_duplicates(dim, keep="last").set_index(dim)[f"{dim}_label"]
+            wide[f"{dim}_label"] = wide[dim].map(lab)
     return wide
 
 
