@@ -100,10 +100,24 @@ class Kosis:
     def meta(self, org_id: str, tbl_id: str, kind: str) -> list[dict]:
         return self._call("statisticsData.do", {"method": "getMeta", "type": kind, "orgId": org_id, "tblId": tbl_id})
 
-    def latest_period(self, org_id: str, tbl_id: str) -> str | None:
-        rows = self.meta(org_id, tbl_id, "PRD")
-        periods = sorted(str(r.get("PRD_DE", "")) for r in rows if r.get("PRD_DE"))
-        return periods[-1] if periods else None
+    def latest_period(self, org_id: str, tbl_id: str, *, dims: int = 4, prd_se: str = "Y", log=print) -> str | None:
+        """최신 수록시점. 메타(PRD) → 실패 시 '최근 1개 시점' 데이터 호출(newEstPrdCnt=1)로 확인."""
+        try:
+            rows = self.meta(org_id, tbl_id, "PRD")
+        except ApiError as e:
+            rows = []
+            log(f"[info] {tbl_id} PRD 메타 오류: {e}")
+        periods = sorted(str(r.get("PRD_DE") or r.get("END_PRD_DE") or "") for r in rows)
+        periods = [p for p in periods if p[:4].isdigit()]
+        if periods:
+            return periods[-1]
+        log(f"[info] {tbl_id} PRD 메타 응답 형식 미일치 → 최신 1개 시점 조회로 대체 (응답 예: {str(rows[:2])[:200]})")
+        params = {"method": "getList", "orgId": org_id, "tblId": tbl_id, "itmId": "ALL", "prdSe": prd_se, "newEstPrdCnt": "1"}
+        for i in range(1, dims + 1):
+            params[f"objL{i}"] = "ALL"
+        data = self._call("Param/statisticsParameterData.do", params)
+        got = sorted(str(r.get("PRD_DE")) for r in data if r.get("PRD_DE"))
+        return got[-1] if got else None
 
     # 통합검색
     def search(self, keyword: str, rows: int = 50) -> list[dict]:

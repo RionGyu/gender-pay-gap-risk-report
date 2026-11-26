@@ -42,7 +42,7 @@ def collect_kosis(cfg: dict, manifest: dict, log) -> None:
     api = Kosis(kc["base_url"])
     for name, t in kc["tables"].items():
         try:
-            latest = api.latest_period(t["org_id"], t["tbl_id"]) if t["end_year"] == "latest" else str(t["end_year"])
+            latest = api.latest_period(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], log=log) if t["end_year"] == "latest" else str(t["end_year"])
         except ApiError as e:
             if t.get("required"):
                 raise
