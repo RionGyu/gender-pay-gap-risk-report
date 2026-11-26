@@ -5,7 +5,7 @@
 
 - 📄 **리포트**: [`docs/index.html`](docs/index.html) (GitHub Pages로 공개, 단일 HTML · 오프라인·인쇄 가능)
 - 🎯 **관련 부처**: 고용노동부, 성평등가족부, 국가데이터처
-- 🔄 **자동 갱신**: GitHub Actions가 매월 API로 최신 통계를 수집해 리포트 수치·문장·차트를 다시 생성
+- 🔄 **원클릭 재수집**: 새 연도 통계가 공표되면 GitHub Actions에서 「Run workflow」 한 번으로 API 수집 → 정제 → 분석 → 리포트(수치·문장·차트)를 다시 생성
 
 ## 리포트 구성
 

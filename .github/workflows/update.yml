@@ -1,4 +1,4 @@
-name: 통계 자동 수집·리포트 갱신
+name: 통계 수집·리포트 갱신 (수동 실행)
 
 on:
   workflow_dispatch:
@@ -7,9 +7,6 @@ on:
         description: "KOSIS 키워드 검색으로 후보 통계표 목록도 저장"
         type: boolean
         default: false
-  schedule:
-    # 매월 1일 09:00 KST (고용형태별근로실태조사는 연 1회 4월말 공표 — 월 단위로 확인해 새 연도를 자동 반영)
-    - cron: "0 0 1 * *"
   push:
     branches: [main]
     paths: ["pipeline/**", "config/**", "data/manual/**"]

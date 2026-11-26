@@ -169,7 +169,7 @@ def build(res: dict) -> str:
         unm = sum(1 for k in q if k.startswith("unmapped"))
         chk = f"{q.get('check_wage_components_fail(>1%)', 0)}/{q.get('check_wage_components_tested', 0)}" if "check_wage_components_tested" in q else "–"
         q_rows += f"<tr><td>{e(name)}</td><td>{e(q.get('status'))}</td><td>{f0(q.get('rows_in'))}</td><td>{f0(miss)}</td><td>{unm}</td><td>{chk}</td></tr>"
-    s7_text = f"""<p>매년(고용형태별근로실태조사) 또는 매월 갱신되는 공공통계를 <b>API로 자동 수집하고, 결측·코드 불일치를 정제해 분석·리포트까지 재생성하는 파이프라인</b>을 구축했습니다. GitHub Actions가 정해진 일정에 파이프라인을 실행하고, 새 연도가 공표되면 이 리포트의 수치와 문장이 자동으로 바뀝니다.</p>
+    s7_text = f"""<p>매년(고용형태별근로실태조사) 또는 매월 갱신되는 공공통계를 <b>API로 자동 수집하고, 결측·코드 불일치를 정제해 분석·리포트까지 재생성하는 파이프라인</b>을 구축했습니다. 새 연도 통계가 공표되면 GitHub Actions에서 한 번 실행하는 것만으로 최신 연도를 자동 탐지해 수집하고, 이 리포트의 수치·문장·차트가 모두 다시 생성됩니다.</p>
 <div class="pipe">
 <div><b>① 수집 collect</b>KOSIS 공유서비스 API(4만 셀 제한 대응 연도 분할), 공공데이터포털 파일데이터 API. 최신 연도 자동 탐지, 증분 수집</div>
 <div><b>② 정제 clean</b>결측·비공개 기호('-','x','…') 처리, 분류 순서 자동 식별, 직종·산업 명칭→표준코드, 산재보험 업종→KSIC 교차표, 단위 통일</div>
@@ -197,7 +197,7 @@ def build(res: dict) -> str:
 ])}"""
 
     meta_row = (f"<span>기준연도 {year}년</span><span>분석: 직종·산업×학력×연령×성별 셀 요인분해</span>"
-                f"<span>생성 {dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).strftime('%Y-%m-%d')} (자동 갱신)</span>")
+                f"<span>생성 {dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).strftime('%Y-%m-%d')}</span>")
     banner = ('<div class="banner"><b>가상 데이터 미리보기</b> · 이 화면은 레이아웃 확인용 가상 데이터로 만든 것으로 실제 통계가 아닙니다. '
               '실제 수집 데이터로 다시 생성하면 이 배너는 사라집니다.</div>') if sample else ""
     footer = ("자료: 고용노동부 「고용형태별근로실태조사」, 한국산업안전보건공단 「산업재해통계」, 안전보건공단 「근로환경조사」(입력 시). "
