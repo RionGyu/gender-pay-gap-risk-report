@@ -1,0 +1,70 @@
+# 수집 대상 통계표 정의
+# - API 키는 여기에 쓰지 않습니다. 환경변수 KOSIS_API_KEY / DATA_GO_KR_KEY 로만 주입합니다.
+# - 새 연도가 공표되면 end_year 를 "latest" 로 두면 자동으로 최신 연도까지 수집합니다.
+
+kosis:
+  base_url: https://kosis.kr/openapi
+  # KOSIS 1회 호출 최대 셀 수(40,000) 제한 때문에 연도별로 나눠 호출합니다.
+  max_cells_per_call: 40000
+  tables:
+    wage_occ:
+      title: 직종·학력·연령계층·성별 임금 및 근로조건 (고용형태별근로실태조사)
+      org_id: "118"
+      tbl_id: DT_118N_PAYM42
+      period: Y
+      start_year: 2020
+      end_year: latest
+      dims: 4          # 분류 수 (직종, 학력, 성별, 연령)
+      required: true
+    wage_ind:
+      title: 산업·학력·연령계층·성별 임금 및 근로조건 (고용형태별근로실태조사)
+      org_id: "118"
+      tbl_id: DT_118N_PAYN42
+      period: Y
+      start_year: 2020
+      end_year: latest
+      dims: 4
+      required: true
+    wage_occ_career:
+      title: 직종·경력년수·성별 임금 및 근로조건 (고용형태별근로실태조사)
+      org_id: "118"
+      tbl_id: DT_118N_PAYM37
+      period: Y
+      start_year: 2020
+      end_year: latest
+      dims: 3
+      required: false
+
+  # 위치가 확정되지 않은 통계표는 키워드 검색으로 찾고(discover.py),
+  # 찾은 tbl_id 를 위 tables 에 추가합니다.
+  discovery_keywords:
+    - 근로환경조사 교대
+    - 근로환경조사 야간
+    - 근로환경조사 위험
+    - 산업재해 성별
+    - 산업재해 직종
+    - 재해자 성별 업종
+
+data_go_kr:
+  # 파일데이터의 자동변환 OpenAPI(odcloud). 데이터셋 ID 기준.
+  odcloud_base: https://api.odcloud.kr/api
+  swagger_url: https://infuser.odcloud.kr/oas/docs?namespace={dataset_id}/v1
+  datasets:
+    injury_micro:
+      title: 한국산업안전보건공단_산업재해통계 마이크로 데이터 (업종·성별·연령·재해정도)
+      dataset_id: "15127634"
+      required: false
+    injury_by_type:
+      title: 한국산업안전보건공단_산업중분류별 발생형태별 사고재해자수
+      dataset_id: "15084677"
+      required: false
+    comp_by_sex:
+      title: 근로복지공단_성별 산재처리현황
+      dataset_id: "15117426"
+      required: false
+
+manual:
+  # API로 제공되지 않는 자료(예: 근로환경조사 원자료 집계)는 data/manual/ 에 두면
+  # 정제 단계에서 같은 규칙으로 읽습니다. 형식은 data/manual/README.md 참고.
+  kwcs_occ_sex: data/manual/kwcs_occ_sex.csv
+  injury_ind_sex: data/manual/injury_ind_sex.csv

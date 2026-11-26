@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="동일 산업·직무 내 성별 임금격차를 직종 분리, 초과근로, 산업재해 위험 노출로 분해한 정책 브리핑 리포트">
+<style>
+:root{
+  color-scheme: light;
+  --page:#f9f9f9; --surface:#ffffff; --ink:#191919; --ink2:#666666; --grid:#e7e7e7; --axis:#c2c2c2;
+  --border:rgba(11,11,11,.10); --accent:#1757ac;
+  --male:#257de0; --female:#f47230; --pos:#ec4647; --neg:#257de0; --total:#8c8c8c; --wash:#eef4fc;
+  --font: "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --page:#0b0b0b; --surface:#191919; --ink:#efefef; --ink2:#9c9c9c; --grid:#303030; --axis:#474747;
+    --border:rgba(255,255,255,.10); --accent:#6aabf1;
+    --male:#338ced; --female:#e76624; --pos:#eb6263; --neg:#338ced; --total:#8a8a8a; --wash:#16253a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0b0b0b; --surface:#191919; --ink:#efefef; --ink2:#9c9c9c; --grid:#303030; --axis:#474747;
+  --border:rgba(255,255,255,.10); --accent:#6aabf1;
+  --male:#338ced; --female:#e76624; --pos:#eb6263; --neg:#338ced; --total:#8a8a8a; --wash:#16253a;
+}
+*{box-sizing:border-box}
+html{font-family:var(--font);background:var(--page);color:var(--ink);line-height:1.65;-webkit-text-size-adjust:100%}
+body{margin:0}
+main{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:28px;line-height:1.3;margin:6px 0 6px;letter-spacing:-.01em}
+h2{font-size:21px;margin:56px 0 8px;padding-top:12px;border-top:2px solid var(--ink)}
+h3{font-size:16px;margin:28px 0 8px}
+p{margin:8px 0}
+.kicker{color:var(--ink2);font-size:13px;letter-spacing:.02em}
+.sub{color:var(--ink2);font-size:15px}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--ink2);font-size:13px;margin-top:10px}
+.banner{background:#fff4e5;color:#5c3a00;border:1px solid #f2a600;border-radius:8px;padding:10px 14px;margin:16px 0;font-size:14px}
+:root[data-theme="dark"] .banner{background:#2a2010;color:#ffd58a}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:14px 0}
+.exec{border:2px solid var(--ink);border-radius:4px;padding:24px 28px;background:var(--surface)}
+.exec h2{border:none;margin:0 0 4px;padding:0;font-size:20px}
+.exec .box-title{font-weight:700;font-size:16px;margin:18px 0 4px}
+.exec ul{list-style:none;padding:0;margin:0}
+.exec li{padding-left:1.2em;text-indent:-1.2em;margin:4px 0}
+.exec li::before{content:"○ ";}
+.exec li.dash::before{content:"- ";}
+.exec li.dash{margin-left:1.2em;color:var(--ink2);font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0 4px}
+.tile{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--surface)}
+.tile .lab{font-size:13px;color:var(--ink2)}
+.tile .val{font-size:26px;font-weight:650;line-height:1.25}
+.tile .note{font-size:12px;color:var(--ink2)}
+.toc{columns:2;font-size:14px;padding-left:18px}
+.toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border)}
+.figure{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 18px 10px;margin:16px 0}
+.figure .ftitle{font-weight:650;font-size:15px}
+.figure .fsub{color:var(--ink2);font-size:13px;margin-bottom:6px}
+.figure .src{color:var(--ink2);font-size:12px;margin-top:6px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink2);margin:4px 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%}
+.sw.rect{border-radius:2px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--font);fill:var(--ink2);font-size:12px}
+svg .lab-strong{fill:var(--ink);font-weight:600}
+.tabs{display:flex;gap:6px;margin:6px 0}
+.tabs button{font:inherit;font-size:13px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+details.tbl{margin-top:6px;font-size:13px}
+details.tbl summary{cursor:pointer;color:var(--ink2)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--grid);padding:5px 8px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink2);font-weight:600}
+.tbl-wrap{overflow-x:auto}
+.policy td,.policy th{white-space:normal;text-align:left;vertical-align:top}
+.callout{border-left:3px solid var(--accent);background:var(--wash);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:12px 0}
+.pipe div{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);font-size:13px}
+.pipe b{display:block;font-size:14px;margin-bottom:2px}
+code{font-size:12.5px;background:var(--wash);padding:1px 5px;border-radius:4px}
+#tip{position:fixed;pointer-events:none;z-index:10;background:var(--surface);color:var(--ink);border:1px solid var(--border);
+  box-shadow:0 4px 18px rgba(0,0,0,.12);border-radius:8px;padding:8px 10px;font-size:12.5px;opacity:0;transition:opacity .08s;max-width:280px}
+#tip .tv{font-weight:650;font-size:14px}
+#tip .row{display:flex;align-items:center;gap:6px}
+#tip .key{display:inline-block;width:12px;height:2px}
+.theme-btn{position:fixed;top:12px;right:12px;font:inherit;font-size:12px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
+footer{margin-top:60px;color:var(--ink2);font-size:12.5px}
+@media print{
+  .theme-btn,.tabs,details.tbl summary{display:none}
+  html{background:#fff}
+  .exec{page-break-after:always;border-width:1.5px}
+  h2{page-break-before:auto}
+  .figure{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<button class="theme-btn" type="button" id="themeBtn">다크/라이트</button>
+<div id="tip" role="status" aria-live="polite"></div>
+<main>
+<header>
+  <div class="kicker">정책 브리핑 · 고용노동부 / 성평등가족부 / 국가데이터처 관련</div>
+  <h1>{{TITLE}}</h1>
+  <div class="sub">{{SUBTITLE}}</div>
+  <div class="meta-row">{{META_ROW}}</div>
+  {{BANNER}}
+</header>
+
+<section class="exec" id="summary" aria-labelledby="exec-h">
+  <h2 id="exec-h">정책 요약 (Executive Summary)</h2>
+  <div class="kicker">{{EXEC_KICKER}}</div>
+  {{TILES}}
+  {{EXEC_BODY}}
+</section>
+
+<nav aria-label="목차" style="margin-top:28px">
+  <ol class="toc">
+    <li><a href="#s1">현황: 성별 임금격차의 크기와 추이</a></li>
+    <li><a href="#s2">직종 분리 효과</a></li>
+    <li><a href="#s3">동일 직무 내 초과근로·위험 보상</a></li>
+    <li><a href="#s4">임금 vs 산업재해율</a></li>
+    <li><a href="#s5">격차 요인 분해 (폭포수)</a></li>
+    <li><a href="#s6">정책 제언</a></li>
+    <li><a href="#s7">데이터 수집·정제 파이프라인과 방법론</a></li>
+  </ol>
+</nav>
+
+<section id="s1">
+  <h2>1. 현황: 성별 임금격차의 크기와 추이</h2>
+  {{S1_TEXT}}
+  <div class="figure">
+    <div class="ftitle">남성 대비 여성 시간당 임금총액 비율</div>
+    <div class="fsub">단위: %, 남성 = 100</div>
+    <div id="chart-trend"></div>
+    <div class="src">자료: 고용노동부 「고용형태별근로실태조사」 (KOSIS DT_118N_PAYM42) · 시간당 임금 = 월임금총액 ÷ 총근로시간</div>
+  </div>
+  {{S1_TABLE}}
+</section>
+
+<section id="s2">
+  <h2>2. 직종 분리 효과</h2>
+  {{S2_TEXT}}
+  <div class="figure">
+    <div class="ftitle">직종별 여성 비중과 성별 시간당 임금</div>
+    <div class="fsub">여성 비중이 높은 직종부터 정렬 · 점은 성별 시간당 임금총액(원)</div>
+    <div class="legend"><span><i class="sw" style="background:var(--male)"></i>남성</span><span><i class="sw" style="background:var(--female)"></i>여성</span></div>
+    <div id="chart-dumbbell"></div>
+    <details class="tbl"><summary>표로 보기</summary><div class="tbl-wrap" id="tbl-occ"></div></details>
+    <div class="src">자료: 고용형태별근로실태조사 직종(대분류)·성별, {{YEAR}}년</div>
+  </div>
+  <div class="figure">
+    <div class="ftitle">시간당 임금격차의 구성: 직종 간 분포 차이 vs 같은 직종 안의 차이</div>
+    <div class="fsub">시간가중 shift-share 분해 · 단위: 원</div>
+    <div class="tabs" role="group" aria-label="분류 기준"><button type="button" data-seg="seg_occ" aria-pressed="true">직종 기준</button><button type="button" data-seg="seg_ind" aria-pressed="false">산업 기준</button></div>
+    <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>직종(산업) 간 분포 차이</span><span><i class="sw rect" style="background:var(--female)"></i>같은 직종(산업) 안의 임금 차이</span></div>
+    <div id="chart-shift"></div>
+  </div>
+</section>
+
+<section id="s3">
+  <h2>3. 동일 직무 내 초과근로·위험 보상</h2>
+  {{S3_TEXT}}
+  <div class="figure">
+    <div class="ftitle">같은 직종 안에서 남녀 월임금 차이는 어디서 생기나</div>
+    <div class="fsub">남성 − 여성, 월 단위(원) · 정액급여 / 초과급여 / 특별급여(연간÷12)</div>
+    <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>정액급여 차이</span><span><i class="sw rect" style="background:var(--male)"></i>초과급여 차이</span><span><i class="sw rect" style="background:#00b894"></i>특별급여 차이</span></div>
+    <div id="chart-components"></div>
+    <div class="src">자료: 고용형태별근로실태조사, {{YEAR}}년 · 음수는 여성이 더 많이 받는 항목</div>
+  </div>
+  <div class="figure">
+    <div class="ftitle">직종별 월 초과근로시간</div>
+    <div class="legend"><span><i class="sw" style="background:var(--male)"></i>남성</span><span><i class="sw" style="background:var(--female)"></i>여성</span></div>
+    <div id="chart-overtime"></div>
+  </div>
+</section>
+
+<section id="s4">
+  <h2>4. 임금 vs 산업재해율</h2>
+  {{S4_TEXT}}
+  <div class="figure" id="fig-bubble">
+    <div class="ftitle">산업·성별 시간당 임금과 재해율</div>
+    <div class="fsub">원 크기 = 근로자 수 · 같은 산업의 남녀를 가는 선으로 연결</div>
+    <div class="legend"><span><i class="sw" style="background:var(--male)"></i>남성</span><span><i class="sw" style="background:var(--female)"></i>여성</span></div>
+    <div id="chart-bubble"></div>
+    <details class="tbl"><summary>표로 보기</summary><div class="tbl-wrap" id="tbl-bubble"></div></details>
+    <div class="src">자료: 한국산업안전보건공단 산업재해통계(재해자 수, 산재보험 업종 → KSIC 대분류 변환) ÷ 고용형태별근로실태조사 근로자 수 · 재해율 = 근로자 1만 명당 재해자</div>
+  </div>
+</section>
+
+<section id="s5">
+  <h2>5. 격차 요인 분해 (폭포수 차트)</h2>
+  {{S5_TEXT}}
+  <div class="figure">
+    <div class="ftitle">로그 시간당 임금격차의 요인별 기여</div>
+    <div class="fsub">풀드 Oaxaca-Blinder 분해 · 단위: 로그포인트×100 (≈ %)</div>
+    <div class="tabs" role="group" aria-label="모형"><button type="button" data-wf="oaxaca_ind" aria-pressed="true">산업 모형 (재해율 포함)</button><button type="button" data-wf="oaxaca_occ" aria-pressed="false">직종 모형</button></div>
+    <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>전체·잔여 격차</span><span><i class="sw rect" style="background:var(--pos)"></i>격차를 키우는 요인</span><span><i class="sw rect" style="background:var(--neg)"></i>격차를 줄이는 요인</span></div>
+    <div id="chart-waterfall"></div>
+    <details class="tbl"><summary>표로 보기 (계수 포함)</summary><div class="tbl-wrap" id="tbl-wf"></div></details>
+    <div class="src" id="wf-src"></div>
+  </div>
+</section>
+
+<section id="s6">
+  <h2>6. 정책 제언</h2>
+  {{S6_TEXT}}
+</section>
+
+<section id="s7">
+  <h2>7. 데이터 수집·정제 파이프라인과 방법론</h2>
+  {{S7_TEXT}}
+</section>
+
+<footer>{{FOOTER}}</footer>
+</main>
+
+<script type="application/json" id="data">{{DATA_JSON}}</script>
+<script>
+(function(){
+"use strict";
+const D = JSON.parse(document.getElementById("data").textContent);
+const NS = "http://www.w3.org/2000/svg";
+const fmt = (v, d=0) => v == null ? "–" : Number(v).toLocaleString("ko-KR", {minimumFractionDigits:d, maximumFractionDigits:d});
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(tag, attrs={}, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function txt(parent, x, y, s, attrs={}){ const t=el("text",{x,y,...attrs},parent); t.textContent=s; return t; }
+function svg(id, w, h){ const host=document.getElementById(id); host.textContent=""; const s=el("svg",{viewBox:`0 0 ${w} ${h}`,role:"img"},host); return s; }
+function nice(max){ const p=Math.pow(10,Math.floor(Math.log10(max))); const m=max/p; return (m<=1?1:m<=2?2:m<=5?5:10)*p; }
+function ticks(lo, hi, n=5){ const step=nice((hi-lo)/n); const out=[]; for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) out.push(+v.toFixed(10)); return out; }
+// 둥근 끝(4px)·기준선 쪽은 직각인 막대
+function bar(g, x, y, w, h, fill, dir){ // dir: 'up','down','right','left'
+  const r=Math.min(4, Math.abs(dir==="up"||dir==="down"?h:w)/2, Math.abs(dir==="up"||dir==="down"?w:h)/2);
+  let d;
+  if(dir==="up") d=`M${x},${y+h}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h}Z`;
+  else if(dir==="down") d=`M${x},${y}V${y+h-r}Q${x},${y+h} ${x+r},${y+h}H${x+w-r}Q${x+w},${y+h} ${x+w},${y+h-r}V${y}Z`;
+  else if(dir==="right") d=`M${x},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h-r}Q${x+w},${y+h} ${x+w-r},${y+h}H${x}Z`;
+  else d=`M${x+w},${y}H${x+r}Q${x},${y} ${x},${y+r}V${y+h-r}Q${x},${y+h} ${x+r},${y+h}H${x+w}Z`;
+  return el("path",{d,fill},g);
+}
+// 툴팁: 값이 먼저, 라벨은 뒤 (textContent 로만 삽입)
+const tip=document.getElementById("tip");
+function showTip(ev, title, rows){
+  tip.textContent="";
+  const h=document.createElement("div"); h.style.color="var(--ink2)"; h.textContent=title; tip.appendChild(h);
+  for(const r of rows){ const row=document.createElement("div"); row.className="row";
+    if(r.color){ const k=document.createElement("i"); k.className="key"; k.style.background=r.color; row.appendChild(k); }
+    const v=document.createElement("span"); v.className="tv"; v.textContent=r.value; row.appendChild(v);
+    const l=document.createElement("span"); l.style.color="var(--ink2)"; l.textContent=r.label; row.appendChild(l); tip.appendChild(row); }
+  const x=Math.min(ev.clientX+14, window.innerWidth-300), y=ev.clientY+14; tip.style.left=x+"px"; tip.style.top=y+"px"; tip.style.opacity=1;
+}
+function hideTip(){ tip.style.opacity=0; }
+function hover(node, fn){ node.setAttribute("tabindex","0"); node.style.cursor="default";
+  node.addEventListener("pointermove", e=>fn(e)); node.addEventListener("pointerleave", hideTip);
+  node.addEventListener("focus", ()=>{ const b=node.getBoundingClientRect(); fn({clientX:b.right, clientY:b.top}); }); node.addEventListener("blur", hideTip); }
+function table(id, head, rows){ const host=document.getElementById(id); if(!host) return; host.textContent="";
+  const t=document.createElement("table"); const tr=document.createElement("tr");
+  head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; tr.appendChild(th);}); t.appendChild(tr);
+  rows.forEach(r=>{const tr=document.createElement("tr"); r.forEach(c=>{const td=document.createElement("td"); td.textContent=c; tr.appendChild(td);}); t.appendChild(tr);});
+  host.appendChild(t); }
+
+// ---------------------------------------------------------------- 1. 추이 (선)
+function trend(){
+  const data=D.headline.trend; if(!data.length) return;
+  const W=900,H=260,m={l:44,r:60,t:16,b:30};
+  const s=svg("chart-trend",W,H);
+  const ys=data.map(d=>d.ratio); const lo=Math.floor(Math.min(...ys)-3), hi=Math.ceil(Math.max(...ys)+3);
+  const x=i=>m.l+(data.length===1?0:(i/(data.length-1))*(W-m.l-m.r)); const y=v=>m.t+(hi-v)/(hi-lo)*(H-m.t-m.b);
+  ticks(lo,hi,4).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:css("--grid")},s); txt(s,m.l-8,y(v)+4,fmt(v),{"text-anchor":"end"}); });
+  data.forEach((d,i)=>txt(s,x(i),H-8,d.year+"년",{"text-anchor":"middle"}));
+  el("path",{d:data.map((d,i)=>(i?"L":"M")+x(i)+","+y(d.ratio)).join(""),fill:"none",stroke:css("--female"),"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"},s);
+  const last=data[data.length-1];
+  el("circle",{cx:x(data.length-1),cy:y(last.ratio),r:4.5,fill:css("--female"),stroke:css("--surface"),"stroke-width":2},s);
+  txt(s,x(data.length-1)+10,y(last.ratio)+4,fmt(last.ratio,1)+"%",{class:"lab-strong"});
+  const cross=el("line",{y1:m.t,y2:H-m.b,stroke:css("--axis"),opacity:0},s);
+  const hit=el("rect",{x:m.l-20,y:0,width:W-m.l-m.r+40,height:H,fill:"transparent"},s);
+  hover(hit,e=>{ const r=s.getBoundingClientRect(); const px=(e.clientX-r.left)/r.width*W;
+    let i=Math.round((px-m.l)/((W-m.l-m.r)/Math.max(1,data.length-1))); i=Math.max(0,Math.min(data.length-1,i)); const d=data[i];
+    cross.setAttribute("x1",x(i)); cross.setAttribute("x2",x(i)); cross.setAttribute("opacity",1);
+    showTip(e,d.year+"년",[{value:fmt(d.ratio,1)+"%",label:"여성/남성",color:css("--female")},{value:fmt(d.hourly_m)+"원",label:"남성 시간당",color:css("--male")},{value:fmt(d.hourly_f)+"원",label:"여성 시간당",color:css("--female")}]); });
+  hit.addEventListener("pointerleave",()=>cross.setAttribute("opacity",0));
+}
+
+// ---------------------------------------------------------------- 2. 덤벨 (직종별 남녀 시급)
+function dumbbell(){
+  const rows=D.seg_occ.rows; const W=900,rowH=34,m={l:150,r:70,t:20,b:28}; const H=m.t+m.b+rows.length*rowH;
+  const s=svg("chart-dumbbell",W,H);
+  const mx=Math.max(...rows.map(r=>Math.max(r.hourly_m,r.hourly_f))); const hi=nice(mx/4)*Math.ceil(mx/nice(mx/4));
+  const x=v=>m.l+v/hi*(W-m.l-m.r);
+  ticks(0,hi,5).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t-6,y2:H-m.b,stroke:css("--grid")},s); txt(s,x(v),H-8,v>=10000?fmt(v/10000,1)+"만":fmt(v),{"text-anchor":"middle"}); });
+  rows.forEach((r,i)=>{ const cy=m.t+i*rowH+rowH/2;
+    txt(s,8,cy-2,r.name,{class:"lab-strong"}); txt(s,8,cy+13,"여성 "+fmt(r.female_share,0)+"%",{"font-size":11});
+    el("line",{x1:x(r.hourly_f),x2:x(r.hourly_m),y1:cy,y2:cy,stroke:css("--axis"),"stroke-width":2},s);
+    el("circle",{cx:x(r.hourly_m),cy,r:5,fill:css("--male"),stroke:css("--surface"),"stroke-width":2},s);
+    el("circle",{cx:x(r.hourly_f),cy,r:5,fill:css("--female"),stroke:css("--surface"),"stroke-width":2},s);
+    txt(s,Math.max(x(r.hourly_m),x(r.hourly_f))+10,cy+4,fmt(r.ratio,0)+"%",{});
+    const hit=el("rect",{x:0,y:cy-rowH/2,width:W,height:rowH,fill:"transparent"},s);
+    hover(hit,e=>showTip(e,r.name+" (여성 비중 "+fmt(r.female_share,1)+"%)",[{value:fmt(r.hourly_m)+"원",label:"남성",color:css("--male")},{value:fmt(r.hourly_f)+"원",label:"여성",color:css("--female")},{value:fmt(r.ratio,1)+"%",label:"여성/남성"}]));
+  });
+  table("tbl-occ",["직종","여성 비중(%)","남성 시급","여성 시급","여성/남성(%)","남 초과근로(h)","여 초과근로(h)"],
+    rows.map(r=>[r.name,fmt(r.female_share,1),fmt(r.hourly_m),fmt(r.hourly_f),fmt(r.ratio,1),fmt(r.overtime_h_m,1),fmt(r.overtime_h_f,1)]));
+}
+
+// ---------------------------------------------------------------- 2-2. shift-share 가로 누적막대
+function shift(key){
+  const S=D[key]; const host="chart-shift"; if(!S){ document.getElementById(host).textContent="해당 자료가 없습니다."; return; }
+  const W=900,H=96,m={l:8,r:8,t:28,b:20}; const s=svg(host,W,H);
+  const tot=S.between_won+S.within_won; const x=v=>m.l+v/tot*(W-m.l-m.r);
+  const parts=[{v:S.between_won,c:css("--total"),lab:"분포 차이",pct:S.between_pct},{v:S.within_won,c:css("--female"),lab:"같은 직종 안",pct:S.within_pct}];
+  let acc=0; parts.forEach((p,i)=>{ const w=Math.max(0,x(acc+p.v)-x(acc)-(i?0:2)); const g=el("g",{},s);
+    const r=el("rect",{x:x(acc)+(i?0:0),y:m.t,width:w,height:28,rx:4,fill:p.c},g);
+    const label=fmt(p.pct,0)+"% · "+fmt(p.v)+"원"; if(w>150) txt(g,x(acc)+10,m.t+19,label,{fill:"#fff","font-weight":600,style:"fill:#fff"});
+    hover(r,e=>showTip(e,p.lab,[{value:fmt(p.v)+"원",label:"("+fmt(p.pct,1)+"%)",color:p.c}])); acc+=p.v; });
+  txt(s,m.l,16,"남성 "+fmt(S.W_m)+"원 − 여성 "+fmt(S.W_f)+"원 = 격차 "+fmt(S.gap_won)+"원 (던컨 분리지수 "+fmt(S.duncan_index,1)+")",{class:"lab-strong"});
+}
+
+// ---------------------------------------------------------------- 3. 임금구성 차이 (직종별 누적 가로막대, 음수 허용)
+function components(){
+  const rows=D.seg_occ.rows.filter(r=>r.monthly_gap_components && r.monthly_gap_components.wage_fixed!=null);
+  const keys=[["wage_fixed","정액급여",css("--total")],["wage_overtime","초과급여",css("--male")],["wage_special_m","특별급여",css("--female")==="#e76624"?"#00a888":"#00b894"]];
+  const W=900,rowH=30,m={l:110,r:80,t:10,b:28}; const H=m.t+m.b+rows.length*rowH; const s=svg("chart-components",W,H);
+  let lo=0,hi=0; rows.forEach(r=>{ let p=0,n=0; keys.forEach(([k])=>{const v=r.monthly_gap_components[k]||0; v>0?p+=v:n+=v;}); hi=Math.max(hi,p); lo=Math.min(lo,n); });
+  const step=nice((hi-lo)/5); hi=Math.ceil(hi/step)*step; lo=Math.floor(lo/step)*step;
+  const x=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+  ticks(lo,hi,5).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:v===0?css("--axis"):css("--grid")},s); txt(s,x(v),H-8,fmt(v/10000)+"만",{"text-anchor":"middle"}); });
+  rows.forEach((r,i)=>{ const y=m.t+i*rowH+(rowH-18)/2; txt(s,8,y+13,r.name,{class:"lab-strong"});
+    let pos=0,neg=0,total=0;
+    keys.forEach(([k,lab,c],j)=>{ const v=r.monthly_gap_components[k]||0; total+=v; if(!v) return;
+      let x0,x1; if(v>0){x0=pos;x1=pos+v;pos=x1;} else {x1=neg;x0=neg+v;neg=x0;}
+      const px0=x(x0)+(v>0&&x0!==0?1:0), px1=x(x1)-(v<0&&x1!==0?1:0);
+      const isEnd=(v>0&&x1===pos)||(v<0&&x0===neg);
+      const node=el("rect",{x:px0,y,width:Math.max(1,px1-px0-1),height:18,rx:isEnd?3:0,fill:c},s);
+      hover(node,e=>showTip(e,r.name,[{value:fmt(v)+"원",label:lab+" 차이",color:c}]));
+    });
+    txt(s,x(pos)+8,y+13,fmt(total/10000,0)+"만원",{});
+  });
+}
+
+// ---------------------------------------------------------------- 3-2. 초과근로 덤벨
+function overtime(){
+  const rows=D.seg_occ.rows; const W=900,rowH=28,m={l:110,r:60,t:10,b:28}; const H=m.t+m.b+rows.length*rowH; const s=svg("chart-overtime",W,H);
+  const mx=Math.max(...rows.map(r=>Math.max(r.overtime_h_m||0,r.overtime_h_f||0))); const hi=Math.ceil(mx/5)*5;
+  const x=v=>m.l+v/hi*(W-m.l-m.r);
+  ticks(0,hi,5).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:css("--grid")},s); txt(s,x(v),H-8,fmt(v)+"h",{"text-anchor":"middle"}); });
+  rows.forEach((r,i)=>{ const cy=m.t+i*rowH+rowH/2; txt(s,8,cy+4,r.name,{class:"lab-strong"});
+    el("line",{x1:x(r.overtime_h_f),x2:x(r.overtime_h_m),y1:cy,y2:cy,stroke:css("--axis"),"stroke-width":2},s);
+    el("circle",{cx:x(r.overtime_h_m),cy,r:5,fill:css("--male"),stroke:css("--surface"),"stroke-width":2},s);
+    el("circle",{cx:x(r.overtime_h_f),cy,r:5,fill:css("--female"),stroke:css("--surface"),"stroke-width":2},s);
+    const hit=el("rect",{x:0,y:cy-rowH/2,width:W,height:rowH,fill:"transparent"},s);
+    hover(hit,e=>showTip(e,r.name+" 월 초과근로",[{value:fmt(r.overtime_h_m,1)+"시간",label:"남성",color:css("--male")},{value:fmt(r.overtime_h_f,1)+"시간",label:"여성",color:css("--female")}]));
+  });
+}
+
+// ---------------------------------------------------------------- 4. 버블
+function bubble(){
+  const B=D.bubble; if(!B||!B.length){ document.getElementById("fig-bubble").style.display="none"; return; }
+  const W=900,H=500,m={l:64,r:30,t:36,b:44}; const s=svg("chart-bubble",W,H);
+  const xmax=nice(Math.max(...B.map(b=>b.injury_rate))/5)*Math.ceil(Math.max(...B.map(b=>b.injury_rate))/nice(Math.max(...B.map(b=>b.injury_rate))/5));
+  const ymin0=Math.min(...B.map(b=>b.hourly)), ymax0=Math.max(...B.map(b=>b.hourly)); const st=nice((ymax0-ymin0)/5);
+  const ylo=Math.floor(ymin0/st)*st-st, yhi=Math.ceil(ymax0/st)*st;
+  const x=v=>m.l+v/xmax*(W-m.l-m.r), y=v=>m.t+(yhi-v)/(yhi-ylo)*(H-m.t-m.b);
+  const wmax=Math.max(...B.map(b=>b.workers)); const rad=v=>4+Math.sqrt(v/wmax)*22;
+  ticks(0,xmax,6).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:css("--grid")},s); txt(s,x(v),H-m.b+18,fmt(v,v<10&&xmax<20?1:0),{"text-anchor":"middle"}); });
+  ticks(ylo,yhi,5).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:css("--grid")},s); txt(s,m.l-8,y(v)+4,fmt(v/10000,1)+"만",{"text-anchor":"end"}); });
+  txt(s,(m.l+W-m.r)/2,H-4,"재해율 (근로자 1만 명당 재해자 수)",{"text-anchor":"middle"});
+  txt(s,m.l-8,m.t-18,"시간당 임금(원)",{"text-anchor":"start"});
+  const byInd={}; B.forEach(b=>{(byInd[b.ind]=byInd[b.ind]||{})[b.sex]=b;});
+  Object.values(byInd).forEach(p=>{ if(p.M&&p.F) el("line",{x1:x(p.M.injury_rate),y1:y(p.M.hourly),x2:x(p.F.injury_rate),y2:y(p.F.hourly),stroke:css("--axis"),"stroke-width":1},s); });
+  const sorted=[...B].sort((a,b)=>b.workers-a.workers);
+  sorted.forEach(b=>{ const c=b.sex==="M"?css("--male"):css("--female");
+    const g=el("g",{},s); el("circle",{cx:x(b.injury_rate),cy:y(b.hourly),r:rad(b.workers),fill:c,"fill-opacity":.55,stroke:css("--surface"),"stroke-width":2},g);
+    el("circle",{cx:x(b.injury_rate),cy:y(b.hourly),r:Math.max(12,rad(b.workers)),fill:"transparent"},g);
+    hover(g,e=>showTip(e,b.name+" · "+(b.sex==="M"?"남성":"여성"),[{value:fmt(b.hourly)+"원",label:"시간당 임금",color:c},{value:fmt(b.injury_rate,1),label:"재해율(1만명당)"},{value:fmt(b.workers)+"명",label:"근로자 수"},{value:fmt(b.overtime_h,1)+"시간",label:"월 초과근로"}]));
+  });
+  // 선택적 직접 라벨: 남성 재해율 상위 4개 + 여성 비중 큰 산업 2개
+  const males=B.filter(b=>b.sex==="M").sort((a,b)=>b.injury_rate-a.injury_rate).slice(0,4);
+  const fems=B.filter(b=>b.sex==="F").sort((a,b)=>b.workers-a.workers).slice(0,2);
+  [...males,...fems].forEach(b=>txt(s,x(b.injury_rate)+rad(b.workers)+4,y(b.hourly)+4,b.name,{class:"lab-strong","font-size":11.5}));
+  table("tbl-bubble",["산업","성별","시간당 임금","재해율(1만명당)","사망률(1만명당)","근로자 수"],
+    [...B].sort((a,b)=>a.ind.localeCompare(b.ind)||a.sex.localeCompare(b.sex)).map(b=>[b.name,b.sex==="M"?"남":"여",fmt(b.hourly),fmt(b.injury_rate,2),fmt(b.fatal_rate,3),fmt(b.workers)]));
+}
+
+// ---------------------------------------------------------------- 5. 폭포수
+const GROUP_LABEL={segregation:"직종·산업 분리",human_capital:"학력·연령·근속",working_time:"초과근로 비중",risk:"재해 위험 노출",shift_night:"교대·야간근무",_year:"연도 구성"};
+function waterfall(key){
+  const O=D[key]; const host="chart-waterfall"; if(!O){ document.getElementById(host).textContent="해당 모형 결과가 없습니다(재해 자료 미수집)."; return; }
+  const steps=[{lab:"전체 격차",v:O.total_log_gap*100,type:"total"}];
+  Object.entries(O.contrib_log).forEach(([k,v])=>{ if(k==="_year" && Math.abs(v*100)<0.3) return; steps.push({lab:GROUP_LABEL[k]||k,v:-v*100,type:"step",raw:v*100,share:O.contrib_share[k]}); });
+  steps.push({lab:"설명되지 않는 격차",v:O.unexplained_log*100,type:"total",share:O.unexplained_share});
+  const W=900,H=340,m={l:44,r:16,t:28,b:58}; const s=svg(host,W,H);
+  let run=0,lo=0,hi=0; const segs=steps.map(st=>{ if(st.type==="total"){ const r={...st,a:0,b:st.v}; run=st.v; return r; } const a=run,b=run+st.v; run=b; return {...st,a,b}; });
+  segs.forEach(sg=>{lo=Math.min(lo,sg.a,sg.b);hi=Math.max(hi,sg.a,sg.b);}); const step=nice((hi-lo)/5); hi=Math.ceil(hi/step)*step; lo=Math.floor(lo/step)*step;
+  const y=v=>m.t+(hi-v)/(hi-lo)*(H-m.t-m.b); const bw=(W-m.l-m.r)/segs.length; const barW=Math.min(48,bw*.6);
+  ticks(lo,hi,5).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:v===0?css("--axis"):css("--grid")},s); txt(s,m.l-8,y(v)+4,fmt(v),{"text-anchor":"end"}); });
+  segs.forEach((sg,i)=>{ const cx=m.l+bw*i+bw/2; const top=Math.max(sg.a,sg.b), bot=Math.min(sg.a,sg.b);
+    const c=sg.type==="total"?css("--total"):(sg.raw>0?css("--pos"):css("--neg"));
+    const h=Math.max(1,y(bot)-y(top)); const node=el("rect",{x:cx-barW/2,y:y(top),width:barW,height:h,rx:3,fill:c},s);
+    if(i<segs.length-1){ const nx=m.l+bw*(i+1)+bw/2; el("line",{x1:cx+barW/2,x2:nx-barW/2,y1:y(sg.b),y2:y(sg.b),stroke:css("--axis"),"stroke-dasharray":"0"},s); }
+    const val=sg.type==="total"?fmt(sg.v,1):(sg.raw>0?"+":"")+fmt(sg.raw,1);
+    txt(s,cx,y(top)-6,val+(sg.share!=null?" ("+fmt(sg.share,0)+"%)":""),{"text-anchor":"middle",class:"lab-strong","font-size":11.5});
+    const lines=[]; sg.lab.split(" ").forEach(w=>{ if(lines.length&&(lines[lines.length-1]+" "+w).length<=8) lines[lines.length-1]+=" "+w; else lines.push(w); });
+    lines.forEach((w,j)=>txt(s,cx,H-m.b+16+j*14,w,{"text-anchor":"middle"}));
+    hover(node,e=>showTip(e,sg.lab,[{value:val,label:"로그포인트×100",color:c},...(sg.share!=null?[{value:fmt(sg.share,1)+"%",label:"전체 격차 대비"}]:[])]));
+  });
+  const coefRows=Object.entries(O.coef).map(([k,c])=>[k,fmt(c.b,4),fmt(c.se,4),c.se?fmt(c.b/c.se,2):"–"]);
+  table("tbl-wf",["변수","계수","강건 표준오차","t"],coefRows);
+  document.getElementById("wf-src").textContent=`셀 수 ${fmt(O.n_cells)} · 가중 R² ${fmt(O.r2,3)} · 분석연도 ${O.years.join(", ")} · 근로자 수 가중 WLS, HC1 표준오차`;
+}
+
+function tabs(attr, fn){ document.querySelectorAll(`[data-${attr}]`).forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(`[data-${attr}]`).forEach(o=>o.setAttribute("aria-pressed",o===b?"true":"false")); fn(b.dataset[attr]); })); }
+function renderAll(){ trend(); dumbbell(); shift(document.querySelector('[data-seg][aria-pressed="true"]').dataset.seg); components(); overtime(); bubble();
+  const wf=document.querySelector('[data-wf][aria-pressed="true"]').dataset.wf; waterfall(D[wf]?wf:"oaxaca_occ"); }
+tabs("seg", shift); tabs("wf", waterfall);
+if(!D.oaxaca_ind){ const b=document.querySelector('[data-wf="oaxaca_ind"]'); b.disabled=true; b.title="재해 자료 미수집"; document.querySelector('[data-wf="oaxaca_occ"]').setAttribute("aria-pressed","true"); b.setAttribute("aria-pressed","false"); }
+document.getElementById("themeBtn").addEventListener("click",()=>{ const r=document.documentElement; const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme=dark?"light":"dark"; renderAll(); });
+renderAll();
+})();
+</script>
+</body>
+</html>

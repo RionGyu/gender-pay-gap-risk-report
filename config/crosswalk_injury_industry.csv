@@ -1,0 +1,44 @@
+level,keyword,ksic,note
+mid,통신,J,운수·창고및통신업 중 통신업 → 정보통신업
+mid,철도,H,
+mid,항공,H,
+mid,창고,H,
+mid,운수,H,
+mid,수상,H,
+mid,도소매,G,도소매및소비자용품수리업
+mid,도매,G,
+mid,소매,G,
+mid,음식,I,음식및숙박업
+mid,숙박,I,
+mid,부동산,L,
+mid,보건,Q,보건및사회복지사업
+mid,사회복지,Q,
+mid,교육,P,
+mid,오락,R,오락·문화및운동관련사업
+mid,문화,R,
+mid,국가,O,국가및지방자치단체의사업
+mid,지방자치,O,
+mid,건물등의종합관리,N,
+mid,건물종합관리,N,
+mid,위생,N,위생및유사서비스업(청소·방역 등)
+mid,사업서비스,N,
+mid,경비,N,
+mid,전문기술,M,
+mid,연구,M,
+mid,하수,E,
+mid,폐기물,E,
+mid,수도,E,
+mid,수리,S,
+mid,금융,K,
+mid,보험,K,
+big,광업,B,
+big,제조,C,
+big,전기,D,전기·가스·증기및수도사업 → D(수도 중업종은 E로 위에서 분리)
+big,가스,D,
+big,건설,F,
+big,운수,H,
+big,금융,K,
+big,농업,A,
+big,임업,A,
+big,어업,A,
+big,기타의사업,S,기타의사업 중 위에서 분류되지 않은 잔여 → 기타개인서비스
