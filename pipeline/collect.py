@@ -58,7 +58,13 @@ def collect_kosis(cfg: dict, manifest: dict, log) -> None:
             out = RAW / name / f"{year}.json"
             if out.exists() and year < end:
                 continue  # 확정된 과거 연도는 재수집하지 않음
-            rows = api.table(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], start=str(year), end=str(year))
+            try:
+                rows = api.table(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], start=str(year), end=str(year))
+            except ApiError as e:
+                if t.get("required"):
+                    raise
+                log(f"[skip] {name} {year}: {e}")
+                continue
             if not rows:
                 log(f"[warn] {name} {year}: 0행")
                 continue

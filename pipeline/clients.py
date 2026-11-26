@@ -83,11 +83,41 @@ class Kosis:
 
     # 통계표 데이터 (분류값·항목 전체)
     def table(self, org_id: str, tbl_id: str, *, dims: int, prd_se: str, start: str, end: str) -> list[dict]:
+        """4만 셀을 넘으면(오류 31) 항목(itmId)을 나눠서 다시 호출합니다."""
+        try:
+            return self._table(org_id, tbl_id, dims=dims, prd_se=prd_se, start=start, end=end, itm="ALL")
+        except ApiError as e:
+            if "오류 31" not in str(e):
+                raise
+        items = self.item_ids(org_id, tbl_id)
+        if len(items) < 2:
+            raise ApiError(f"{tbl_id}: 4만 셀 초과인데 항목 목록을 얻지 못했습니다")
+        out: list[dict] = []
+        queue = [items]
+        while queue:
+            chunk = queue.pop(0)
+            try:
+                out.extend(self._table(org_id, tbl_id, dims=dims, prd_se=prd_se, start=start, end=end,
+                                       itm="+".join(chunk) + "+"))
+            except ApiError as e:
+                if "오류 31" not in str(e) or len(chunk) == 1:
+                    raise
+                mid = len(chunk) // 2
+                queue[:0] = [chunk[:mid], chunk[mid:]]
+        return out
+
+    def item_ids(self, org_id: str, tbl_id: str) -> list[str]:
+        rows = self.meta(org_id, tbl_id, "ITM")
+        ids = [str(r["ITM_ID"]) for r in rows
+               if r.get("ITM_ID") and (str(r.get("OBJ_ID", "")).upper() == "ITEM" or "항목" in str(r.get("OBJ_NM", "")))]
+        return list(dict.fromkeys(ids))
+
+    def _table(self, org_id: str, tbl_id: str, *, dims: int, prd_se: str, start: str, end: str, itm: str) -> list[dict]:
         params = {
             "method": "getList",
             "orgId": org_id,
             "tblId": tbl_id,
-            "itmId": "ALL",
+            "itmId": itm,
             "prdSe": prd_se,
             "startPrdDe": start,
             "endPrdDe": end,
