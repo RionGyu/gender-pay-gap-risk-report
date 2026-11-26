@@ -270,6 +270,17 @@ def clean_injury_micro(manifest: dict) -> tuple[pd.DataFrame | None, dict]:
             m = re.search(r"(20\d\d)", info.get("summary", ""))
             df["year"] = int(m.group(1)) if m else np.nan
         frames.append(df)
+    # 파일로만 제공되는 경우: data/manual/injury_micro/*.xlsx|csv (공공데이터포털에서 내려받은 원본 그대로)
+    for p in sorted((ROOT / "data" / "manual" / "injury_micro").glob("*")):
+        if p.suffix.lower() not in (".xlsx", ".xls", ".csv"):
+            continue
+        df = pd.read_csv(p, encoding="utf-8-sig") if p.suffix.lower() == ".csv" else pd.read_excel(p)
+        df.columns = [str(c).strip() for c in df.columns]
+        ycol = next((c for c in df.columns if re.search(r"연도|년도|발생년", c)), None)
+        m = re.search(r"(20\d\d)", p.stem)
+        df["year"] = pd.to_numeric(df[ycol].astype(str).str[:4], errors="coerce") if ycol else (int(m.group(1)) if m else np.nan)
+        qa[f"manual_file[{p.name}]"] += len(df)
+        frames.append(df)
     if not frames:
         return None, {"status": "no_raw_files"}
     df = pd.concat(frames, ignore_index=True)
