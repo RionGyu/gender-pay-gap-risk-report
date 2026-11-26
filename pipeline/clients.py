@@ -29,7 +29,7 @@ def _mask(text: str) -> str:
     return re.sub(r"(apiKey|serviceKey)=[^&\s]+", r"\1=***", text)
 
 
-def _get(url: str, params: dict[str, Any], *, retries: int = 4, timeout: int = 60) -> requests.Response:
+def _get(url: str, params: dict[str, Any], *, retries: int = 3, timeout: tuple = (15, 120)) -> requests.Response:
     last: Exception | None = None
     for attempt in range(retries):
         try:

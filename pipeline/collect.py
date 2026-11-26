@@ -42,36 +42,47 @@ def collect_kosis(cfg: dict, manifest: dict, log) -> None:
     api = Kosis(kc["base_url"])
     for name, t in kc["tables"].items():
         try:
-            latest = api.latest_period(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], log=log) if t["end_year"] == "latest" else str(t["end_year"])
+            _collect_table(api, name, t, manifest, log)
+        except ApiError as e:
+            have_raw = any((RAW / name).glob("*.json"))
+            if t.get("required") and not have_raw:
+                raise
+            # 서버 장애·일시 차단 시: 이전에 받은 원본으로 계속 진행(다음 실행에서 재시도)
+            log(f"[warn] {name}: 수집 실패, 기존 원본 사용 - {e}")
+
+
+def _collect_table(api: Kosis, name: str, t: dict, manifest: dict, log) -> None:
+    try:
+        latest = api.latest_period(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], log=log) if t["end_year"] == "latest" else str(t["end_year"])
+    except ApiError as e:
+        if t.get("required"):
+            raise
+        log(f"[skip] {name}: 메타 조회 실패 - {e}")
+        return
+    if not latest:
+        log(f"[skip] {name}: 수록기간 없음")
+        return
+    end = int(str(latest)[:4])
+    entry = manifest["sources"].setdefault(name, {"title": t["title"], "tbl_id": t["tbl_id"], "files": {}})
+    entry["latest_period"] = latest
+    for year in range(int(t["start_year"]), end + 1):
+        out = RAW / name / f"{year}.json"
+        if out.exists() and year < end:
+            continue  # 확정된 과거 연도는 재수집하지 않음
+        try:
+            rows = api.table(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], start=str(year), end=str(year))
         except ApiError as e:
             if t.get("required"):
                 raise
-            log(f"[skip] {name}: 메타 조회 실패 - {e}")
+            log(f"[skip] {name} {year}: {e}")
             continue
-        if not latest:
-            log(f"[skip] {name}: 수록기간 없음")
+        if not rows:
+            log(f"[warn] {name} {year}: 0행")
             continue
-        end = int(str(latest)[:4])
-        entry = manifest["sources"].setdefault(name, {"title": t["title"], "tbl_id": t["tbl_id"], "files": {}})
-        entry["latest_period"] = latest
-        for year in range(int(t["start_year"]), end + 1):
-            out = RAW / name / f"{year}.json"
-            if out.exists() and year < end:
-                continue  # 확정된 과거 연도는 재수집하지 않음
-            try:
-                rows = api.table(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], start=str(year), end=str(year))
-            except ApiError as e:
-                if t.get("required"):
-                    raise
-                log(f"[skip] {name} {year}: {e}")
-                continue
-            if not rows:
-                log(f"[warn] {name} {year}: 0행")
-                continue
-            digest = _write_json(out, rows)
-            entry["files"][str(year)] = {"rows": len(rows), "sha256_16": digest,
-                                         "collected_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}
-            log(f"[ok] {name} {year}: {len(rows):,}행")
+        digest = _write_json(out, rows)
+        entry["files"][str(year)] = {"rows": len(rows), "sha256_16": digest,
+                                     "collected_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")}
+        log(f"[ok] {name} {year}: {len(rows):,}행")
 
 
 def collect_odcloud(cfg: dict, manifest: dict, log) -> None:
@@ -103,7 +114,7 @@ def collect_odcloud(cfg: dict, manifest: dict, log) -> None:
             log(f"[ok] {name} [{i + 1}/{len(paths)}] {len(rows):,}행")
 
 
-def discover(cfg: dict, log) -> None:
+def discover(cfg: dict, log) -> None:  # noqa: C901
     """위치 미확정 통계표(근로환경조사, 산업재해 직종·성별) 키워드 검색 결과를 저장."""
     api = Kosis(cfg["kosis"]["base_url"])
     found = {}
@@ -112,6 +123,9 @@ def discover(cfg: dict, log) -> None:
             rows = api.search(kw)
         except ApiError as e:
             log(f"[warn] 검색 '{kw}': {e}")
+            if "timed out" in str(e) or "Max retries" in str(e):
+                log("[warn] KOSIS 연결 불가 → 탐색 중단")
+                break
             continue
         found[kw] = [{k: r.get(k) for k in ("ORG_ID", "ORG_NM", "TBL_ID", "TBL_NM", "STAT_ID", "STRT_PRD_DE", "END_PRD_DE")}
                      for r in rows]
