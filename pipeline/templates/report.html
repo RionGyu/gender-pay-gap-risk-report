@@ -385,7 +385,7 @@ function bubble(){
 }
 
 // ---------------------------------------------------------------- 5. 폭포수
-const GROUP_LABEL={segregation:"직종·산업 분리",human_capital:"학력·연령·근속",working_time:"초과근로 비중",risk:"재해 위험 노출",shift_night:"교대·야간근무",_year:"연도 구성"};
+const GROUP_LABEL={segregation:"직종·산업 분리",human_capital:"학력·연령",tenure:"근속 기간",working_time:"초과근로 비중",risk:"재해 위험 노출",shift_night:"교대·야간근무",_year:"연도 구성"};
 function waterfall(key){
   const O=D[key]; const host="chart-waterfall"; if(!O){ document.getElementById(host).textContent="해당 모형 결과가 없습니다(재해 자료 미수집)."; return; }
   const steps=[{lab:"전체 격차",v:O.total_log_gap*100,type:"total"}];

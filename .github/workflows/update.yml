@@ -41,7 +41,7 @@ jobs:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: |
           if [ -z "$KOSIS_API_KEY" ]; then echo "::error::KOSIS_API_KEY 시크릿이 없습니다"; exit 1; fi
-          python -m pipeline.run all ${{ inputs.discover && '--discover' || '' }}
+          python -m pipeline.run all --discover
       - name: 변경된 데이터·리포트 커밋
         run: |
           git config user.name "github-actions[bot]"

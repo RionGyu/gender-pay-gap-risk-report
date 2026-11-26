@@ -180,7 +180,7 @@ def build_cells(df: pd.DataFrame, dim: str, extra: pd.DataFrame | None = None, e
         d = pd.concat([d, dums], axis=1)
         groups.setdefault(g, []).extend(dums.columns.tolist())
     if "tenure" in d and d["tenure"].notna().mean() > 0.9:
-        groups["human_capital"].append("tenure")
+        groups["tenure"] = ["tenure"]  # 근속(경력단절 영향)을 학력·연령과 분리
     groups["working_time"] = ["ot_share"]
     if extra is not None:
         d = d.merge(extra, on=extra_on, how="left")
