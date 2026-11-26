@@ -25,10 +25,19 @@ kosis:
       end_year: latest
       dims: 4
       required: true
+    wage_occ_detail:
+      title: 직종·성별 임금 및 근로조건 (고용형태별근로실태조사, 세부 직종)
+      org_id: "118"
+      tbl_id: DT_118N_PAYM41
+      period: Y
+      start_year: 2020
+      end_year: latest
+      dims: auto
+      required: false
     wage_occ_career:
       title: 직종·경력년수·성별 임금 및 근로조건 (고용형태별근로실태조사)
       org_id: "118"
-      tbl_id: DT_118N_PAYM37
+      tbl_id: DT_118N_PAYM47
       period: Y
       start_year: 2020
       end_year: latest

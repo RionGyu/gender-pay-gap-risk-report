@@ -52,6 +52,10 @@ def collect_kosis(cfg: dict, manifest: dict, log) -> None:
 
 
 def _collect_table(api: Kosis, name: str, t: dict, manifest: dict, log) -> None:
+    if t.get("dims") == "auto":  # 분류 개수를 메타(ITM)에서 자동 판별
+        objs = {str(r.get("OBJ_ID")) for r in api.meta(t["org_id"], t["tbl_id"], "ITM") if r.get("OBJ_ID")}
+        t = {**t, "dims": max(1, len(objs - {"ITEM"}))}
+        log(f"[info] {name}: 분류 {t['dims']}개")
     try:
         latest = api.latest_period(t["org_id"], t["tbl_id"], dims=t["dims"], prd_se=t["period"], log=log) if t["end_year"] == "latest" else str(t["end_year"])
     except ApiError as e:
