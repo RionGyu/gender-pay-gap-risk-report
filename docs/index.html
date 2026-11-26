@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>같은 일, 다른 임금? 성별 임금격차의 위험·근무부담 구조 분석</title>
+<meta name="description" content="동일 산업·직무 내 성별 임금격차를 직종 분리, 초과근로, 산업재해 위험 노출로 분해한 정책 브리핑 리포트">
+<style>
+:root{
+  color-scheme: light;
+  --page:#f9f9f9; --surface:#ffffff; --ink:#191919; --ink2:#666666; --grid:#e7e7e7; --axis:#c2c2c2;
+  --border:rgba(11,11,11,.10); --accent:#1757ac;
+  --male:#257de0; --female:#f47230; --pos:#ec4647; --neg:#257de0; --total:#8c8c8c; --wash:#eef4fc;
+  --font: "Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme: dark;
+    --page:#0b0b0b; --surface:#191919; --ink:#efefef; --ink2:#9c9c9c; --grid:#303030; --axis:#474747;
+    --border:rgba(255,255,255,.10); --accent:#6aabf1;
+    --male:#338ced; --female:#e76624; --pos:#eb6263; --neg:#338ced; --total:#8a8a8a; --wash:#16253a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0b0b0b; --surface:#191919; --ink:#efefef; --ink2:#9c9c9c; --grid:#303030; --axis:#474747;
+  --border:rgba(255,255,255,.10); --accent:#6aabf1;
+  --male:#338ced; --female:#e76624; --pos:#eb6263; --neg:#338ced; --total:#8a8a8a; --wash:#16253a;
+}
+*{box-sizing:border-box}
+html{font-family:var(--font);background:var(--page);color:var(--ink);line-height:1.65;-webkit-text-size-adjust:100%}
+body{margin:0}
+main{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+h1{font-size:28px;line-height:1.3;margin:6px 0 6px;letter-spacing:-.01em}
+h2{font-size:21px;margin:56px 0 8px;padding-top:12px;border-top:2px solid var(--ink)}
+h3{font-size:16px;margin:28px 0 8px}
+p{margin:8px 0}
+.kicker{color:var(--ink2);font-size:13px;letter-spacing:.02em}
+.sub{color:var(--ink2);font-size:15px}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--ink2);font-size:13px;margin-top:10px}
+.banner{background:#fff4e5;color:#5c3a00;border:1px solid #f2a600;border-radius:8px;padding:10px 14px;margin:16px 0;font-size:14px}
+:root[data-theme="dark"] .banner{background:#2a2010;color:#ffd58a}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin:14px 0}
+.exec{border:2px solid var(--ink);border-radius:4px;padding:24px 28px;background:var(--surface)}
+.exec h2{border:none;margin:0 0 4px;padding:0;font-size:20px}
+.exec .box-title{font-weight:700;font-size:16px;margin:18px 0 4px}
+.exec ul{list-style:none;padding:0;margin:0}
+.exec li{padding-left:1.2em;text-indent:-1.2em;margin:4px 0}
+.exec li::before{content:"○ ";}
+.exec li.dash::before{content:"- ";}
+.exec li.dash{margin-left:1.2em;color:var(--ink2);font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:14px 0 4px}
+.tile{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--surface)}
+.tile .lab{font-size:13px;color:var(--ink2)}
+.tile .val{font-size:26px;font-weight:650;line-height:1.25}
+.tile .note{font-size:12px;color:var(--ink2)}
+.toc{columns:2;font-size:14px;padding-left:18px}
+.toc a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border)}
+.figure{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 18px 10px;margin:16px 0}
+.figure .ftitle{font-weight:650;font-size:15px}
+.figure .fsub{color:var(--ink2);font-size:13px;margin-bottom:6px}
+.figure .src{color:var(--ink2);font-size:12px;margin-top:6px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--ink2);margin:4px 0 6px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:50%}
+.sw.rect{border-radius:2px}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--font);fill:var(--ink2);font-size:12px}
+svg .lab-strong{fill:var(--ink);font-weight:600}
+.tabs{display:flex;gap:6px;margin:6px 0}
+.tabs button{font:inherit;font-size:13px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+details.tbl{margin-top:6px;font-size:13px}
+details.tbl summary{cursor:pointer;color:var(--ink2)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{border-bottom:1px solid var(--grid);padding:5px 8px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--ink2);font-weight:600}
+.tbl-wrap{overflow-x:auto}
+.policy td,.policy th{white-space:normal;text-align:left;vertical-align:top}
+.callout{border-left:3px solid var(--accent);background:var(--wash);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0}
+.pipe{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:12px 0}
+.pipe div{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);font-size:13px}
+.pipe b{display:block;font-size:14px;margin-bottom:2px}
+code{font-size:12.5px;background:var(--wash);padding:1px 5px;border-radius:4px}
+#tip{position:fixed;pointer-events:none;z-index:10;background:var(--surface);color:var(--ink);border:1px solid var(--border);
+  box-shadow:0 4px 18px rgba(0,0,0,.12);border-radius:8px;padding:8px 10px;font-size:12.5px;opacity:0;transition:opacity .08s;max-width:280px}
+#tip .tv{font-weight:650;font-size:14px}
+#tip .row{display:flex;align-items:center;gap:6px}
+#tip .key{display:inline-block;width:12px;height:2px}
+.theme-btn{position:fixed;top:12px;right:12px;font:inherit;font-size:12px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
+footer{margin-top:60px;color:var(--ink2);font-size:12.5px}
+@media print{
+  .theme-btn,.tabs,details.tbl summary{display:none}
+  html{background:#fff}
+  .exec{page-break-after:always;border-width:1.5px}
+  h2{page-break-before:auto}
+  .figure{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<button class="theme-btn" type="button" id="themeBtn">다크/라이트</button>
+<div id="tip" role="status" aria-live="polite"></div>
+<main>
+<header>
+  <div class="kicker">정책 브리핑 · 고용노동부 / 성평등가족부 / 국가데이터처 관련</div>
+  <h1>같은 일, 다른 임금? 성별 임금격차의 위험·근무부담 구조 분석</h1>
+  <div class="sub">직종 선택의 차이, 동일 직무 내 초과근로·산업재해 위험을 통제하면 격차는 얼마나 남는가</div>
+  <div class="meta-row"><span>기준연도 2025년</span><span>분석 모형: 직종 단위 요인분해</span><span>생성 2026-11-26 (자동 갱신)</span></div>
+  
+</header>
+
+<section class="exec" id="summary" aria-labelledby="exec-h">
+  <h2 id="exec-h">정책 요약 (Executive Summary)</h2>
+  <div class="kicker">현황(문제) → 데이터 분석 결과 → 정책 제언</div>
+  <div class="tiles">
+  <div class="tile"><div class="lab">여성 시간당 임금 (남성=100)</div><div class="val">74.2</div><div class="note">2025년, 월임금총액 기준 67.3</div></div>
+  <div class="tile"><div class="lab">직종 분리로 설명되는 몫</div><div class="val">-6%</div><div class="note">시간당 격차 8,129원 중 -453원</div></div>
+  <div class="tile"><div class="lab">초과근로·위험 노출로 설명되는 몫</div><div class="val">3%</div><div class="note">직종 모형 요인분해</div></div>
+  <div class="tile"><div class="lab">설명되지 않는 격차</div><div class="val">51%</div><div class="note">같은 직종·학력·연령·근속·근무부담 조건</div></div>
+</div>
+  
+<div class="box-title">□ 현황(문제)</div>
+<ul><li>2025년 여성 근로자의 시간당 임금총액은 <b>23,412원</b>으로 남성(31,540원)의 <b>74.2%</b> 수준이며, 2020년(71.4%) 대비 2.8%p 개선되었으나 여전히 큰 격차임</li><li>남성은 월 초과근로 13.1시간으로 여성(6.7시간)보다 길고 위험 업종 비중도 높아, ‘남성 임금이 높은 것은 장시간·위험 노동의 대가’라는 해석과 ‘같은 일을 해도 덜 받는다’는 해석이 맞서 있음</li><li>두 해석은 처방이 정반대(안전보건 지원 vs 직무가치 재평가·동일임금 감독)이므로, 격차를 원인별로 분리해 정책 자원을 배분할 필요</li></ul>
+<div class="box-title">□ 데이터 분석 결과</div>
+<ul><li><b>(직종 분리)</b> 남녀의 직종 분포 차이(던컨 분리지수 27.1)가 시간당 임금격차의 <b>-6%</b>를 설명. 여성 비중이 10%p 높은 직종일수록 평균 시간당 임금이 2.4% 낮음</li><li><b>(근무부담 보상)</b> 직종·학력·연령·근속을 통제한 요인분해에서 초과근로 비중 차이는 격차의 <b>3.4%</b>를 설명</li><li><b>(동일 조건 내 격차)</b> 같은 직종·학력·연령대·근속·초과근로 조건을 맞춰도 격차의 <b>51%</b>가 남음</li><li>즉 격차의 가장 큰 원인은 <b>설명되지 않는 동일 조건 내 격차</b>, 다음은 초과근로·위험 노출(근무부담 보상)이며, ‘위험·장시간 노동 보상’만으로 설명되는 부분은 3%에 그침</li></ul>
+<div class="box-title">□ 정책 제언</div>
+<ul><li><b>(직무가치 재평가)</b> 돌봄·서비스·사무 등 여성 집중 직군의 직무가치를 숙련·책임·노력·작업조건 기준으로 재평가하는 직무평가 가이드 보급, 공공부문·사회서비스 임금체계부터 적용 <span class='kicker'>고용노동부·성평등가족부</span></li><li><b>(동일노동 동일임금 점검)</b> 동일 조건 내 잔여 격차를 매년 같은 방식으로 산출해 성별임금 공시·적극적고용개선조치(AA) 사업장 점검 지표로 활용 <span class='kicker'>고용노동부</span></li><li><b>(안전보건·근로시간)</b> 위험 노출에 대한 임금 보상은 작고 위험 자체가 남성에 편중 → 위험수당 확대보다 고위험 업종의 재해 감소 투자와, 초과근로에 의존하는 임금구조(기본급 비중 확대) 개선이 우선 <span class='kicker'>고용노동부</span></li><li><b>(통계 인프라)</b> 산재통계의 직종×성별 공표, 근로환경조사와 임금조사 연계로 ‘위험부담금’ 효과를 직종 단위까지 추적 <span class='kicker'>국가데이터처·한국산업안전보건공단</span></li></ul>
+</section>
+
+<nav aria-label="목차" style="margin-top:28px">
+  <ol class="toc">
+    <li><a href="#s1">현황: 성별 임금격차의 크기와 추이</a></li>
+    <li><a href="#s2">직종 분리 효과</a></li>
+    <li><a href="#s3">동일 직무 내 초과근로·위험 보상</a></li>
+    <li><a href="#s4">임금 vs 산업재해율</a></li>
+    <li><a href="#s5">격차 요인 분해 (폭포수)</a></li>
+    <li><a href="#s6">정책 제언</a></li>
+    <li><a href="#s7">데이터 수집·정제 파이프라인과 방법론</a></li>
+  </ol>
+</nav>
+
+<section id="s1">
+  <h2>1. 현황: 성별 임금격차의 크기와 추이</h2>
+  <p>고용형태별근로실태조사(2025년 6월 기준)에서 여성의 시간당 임금총액은 남성의 <b>74.2%</b>, 월 임금총액은 <b>67.3%</b>입니다. 월 기준 격차가 더 큰 것은 여성의 근로시간이 짧기 때문이므로, 이 리포트는 근로시간 차이를 걸러낸 <b>시간당 임금</b>을 기본 지표로 씁니다.</p>
+  <div class="figure">
+    <div class="ftitle">남성 대비 여성 시간당 임금총액 비율</div>
+    <div class="fsub">단위: %, 남성 = 100</div>
+    <div id="chart-trend"></div>
+    <div class="src">자료: 고용노동부 「고용형태별근로실태조사」 (KOSIS DT_118N_PAYM42) · 시간당 임금 = 월임금총액 ÷ 총근로시간</div>
+  </div>
+  <div class="card tbl-wrap"><table><tr><th>2025년</th><th>남성</th><th>여성</th><th>여성/남성</th></tr><tr><td>시간당 임금총액(원)</td><td>31,540</td><td>23,412</td><td>74.2%</td></tr><tr><td>월 임금총액(원)</td><td>5,182,000</td><td>3,486,000</td><td>67.3%</td></tr><tr><td>월 총근로시간</td><td>164.3</td><td>148.9</td><td>90.6%</td></tr><tr><td>월 초과근로시간</td><td>13.1</td><td>6.7</td><td>51.1%</td></tr><tr><td>월 초과급여(원)</td><td>365,000</td><td>158,000</td><td>43.3%</td></tr><tr><td>평균 근속(년)</td><td>8.1</td><td>5.8</td><td>71.6%</td></tr></table></div>
+</section>
+
+<section id="s2">
+  <h2>2. 직종 분리 효과</h2>
+  <p>여성 비중이 높은 직종(서비스)은 대체로 시간당 임금이 낮고, 남성 비중이 높은 직종은 높습니다. 남녀 직종 분포가 얼마나 다른지 보여주는 <b>던컨 분리지수는 27.1</b>로, 여성(또는 남성)의 27.1%가 직종을 옮겨야 분포가 같아진다는 뜻입니다.</p>
+<p>시간당 임금격차 8,129원을 <b>직종 간 분포 차이</b>와 <b>같은 직종 안의 임금 차이</b>로 나누면 각각 -6%와 106%입니다 (산업 기준으로는 0%와 100%). 같은 직종 안의 차이에는 아직 학력·연령·근속·근무부담 차이가 섞여 있으므로, 5장에서 이를 다시 분해합니다.</p>
+  <div class="figure">
+    <div class="ftitle">직종별 여성 비중과 성별 시간당 임금</div>
+    <div class="fsub">여성 비중이 높은 직종부터 정렬 · 점은 성별 시간당 임금총액(원)</div>
+    <div class="legend"><span><i class="sw" style="background:var(--male)"></i>남성</span><span><i class="sw" style="background:var(--female)"></i>여성</span></div>
+    <div id="chart-dumbbell"></div>
+    <details class="tbl"><summary>표로 보기</summary><div class="tbl-wrap" id="tbl-occ"></div></details>
+    <div class="src">자료: 고용형태별근로실태조사 직종(대분류)·성별, 2025년</div>
+  </div>
+  <div class="figure">
+    <div class="ftitle">시간당 임금격차의 구성: 직종 간 분포 차이 vs 같은 직종 안의 차이</div>
+    <div class="fsub">시간가중 shift-share 분해 · 단위: 원</div>
+    <div class="tabs" role="group" aria-label="분류 기준"><button type="button" data-seg="seg_occ" aria-pressed="true">직종 기준</button><button type="button" data-seg="seg_ind" aria-pressed="false">산업 기준</button></div>
+    <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>직종(산업) 간 분포 차이</span><span><i class="sw rect" style="background:var(--female)"></i>같은 직종(산업) 안의 임금 차이</span></div>
+    <div id="chart-shift"></div>
+  </div>
+</section>
+
+<section id="s3">
+  <h2>3. 동일 직무 내 초과근로·위험 보상</h2>
+  <p>같은 직종 안의 월 임금 차이를 급여 항목별로 나누면, 정액급여(기본급·고정수당) 차이가 평균 1,147,846원(<b>72%</b>), 초과근로의 대가인 초과급여 차이가 140,869원(9%), 상여금 등 특별급여 차이가 299,906원(19%)입니다. 초과근로에 대한 직접 보상은 격차의 일부이고, 대부분은 정액급여와 특별급여에서 생깁니다.</p>
+<div class="callout">교대·야간근무 비율은 근로환경조사 직종×성별 집계가 입력되면(<code>data/manual/kwcs_occ_sex.csv</code>) 같은 모형에 자동 투입됩니다. 현재는 입력되지 않아 초과근로·재해율만 근무부담 지표로 사용했습니다.</div>
+  <div class="figure">
+    <div class="ftitle">같은 직종 안에서 남녀 월임금 차이는 어디서 생기나</div>
+    <div class="fsub">남성 − 여성, 월 단위(원) · 정액급여 / 초과급여 / 특별급여(연간÷12)</div>
+    <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>정액급여 차이</span><span><i class="sw rect" style="background:var(--male)"></i>초과급여 차이</span><span><i class="sw rect" style="background:#00b894"></i>특별급여 차이</span></div>
+    <div id="chart-components"></div>
+    <div class="src">자료: 고용형태별근로실태조사, 2025년 · 음수는 여성이 더 많이 받는 항목</div>
+  </div>
+  <div class="figure">
+    <div class="ftitle">직종별 월 초과근로시간</div>
+    <div class="legend"><span><i class="sw" style="background:var(--male)"></i>남성</span><span><i class="sw" style="background:var(--female)"></i>여성</span></div>
+    <div id="chart-overtime"></div>
+  </div>
+</section>
+
+<section id="s4">
+  <h2>4. 임금 vs 산업재해율</h2>
+  <p>산업재해 자료가 아직 수집되지 않았습니다.</p>
+  <div class="figure" id="fig-bubble">
+    <div class="ftitle">산업·성별 시간당 임금과 재해율</div>
+    <div class="fsub">원 크기 = 근로자 수 · 같은 산업의 남녀를 가는 선으로 연결</div>
+    <div class="legend"><span><i class="sw" style="background:var(--male)"></i>남성</span><span><i class="sw" style="background:var(--female)"></i>여성</span></div>
+    <div id="chart-bubble"></div>
+    <details class="tbl"><summary>표로 보기</summary><div class="tbl-wrap" id="tbl-bubble"></div></details>
+    <div class="src">자료: 한국산업안전보건공단 산업재해통계(재해자 수, 산재보험 업종 → KSIC 대분류 변환) ÷ 고용형태별근로실태조사 근로자 수 · 재해율 = 근로자 1만 명당 재해자</div>
+  </div>
+</section>
+
+<section id="s5">
+  <h2>5. 격차 요인 분해 (폭포수 차트)</h2>
+  <p>직종(또는 산업)×학력×연령×성별 셀을 근로자 수로 가중한 회귀모형으로 로그 시간당 임금을 설명하고, 남녀 평균 특성 차이에 계수를 곱해 격차를 요인별로 나눴습니다(풀드 Oaxaca-Blinder). 빨간 막대는 격차를 키우는 요인, 파란 막대는 줄이는 요인이며, 끝까지 남는 회색 막대가 같은 조건에서도 설명되지 않는 격차입니다.</p>
+<p>직종 모형 기준으로 격차의 -5%는 직종 분리, 3.4%는 초과근로로 설명되고, <b>51%는 설명되지 않습니다.</b> 설명되지 않는 부분은 차별만을 뜻하지는 않지만(직무 세부 차이, 경력단절, 측정되지 않은 요인 포함), 정책적으로는 동일노동 동일임금 점검이 필요한 영역의 상한으로 읽을 수 있습니다.</p>
+  <div class="figure">
+    <div class="ftitle">로그 시간당 임금격차의 요인별 기여</div>
+    <div class="fsub">풀드 Oaxaca-Blinder 분해 · 단위: 로그포인트×100 (≈ %)</div>
+    <div class="tabs" role="group" aria-label="모형"><button type="button" data-wf="oaxaca_ind" aria-pressed="true">산업 모형 (재해율 포함)</button><button type="button" data-wf="oaxaca_occ" aria-pressed="false">직종 모형</button></div>
+    <div class="legend"><span><i class="sw rect" style="background:var(--total)"></i>전체·잔여 격차</span><span><i class="sw rect" style="background:var(--pos)"></i>격차를 키우는 요인</span><span><i class="sw rect" style="background:var(--neg)"></i>격차를 줄이는 요인</span></div>
+    <div id="chart-waterfall"></div>
+    <details class="tbl"><summary>표로 보기 (계수 포함)</summary><div class="tbl-wrap" id="tbl-wf"></div></details>
+    <div class="src" id="wf-src"></div>
+  </div>
+</section>
+
+<section id="s6">
+  <h2>6. 정책 제언</h2>
+  <div class="card tbl-wrap"><table class="policy">
+<tr><th>격차 원인</th><th>근거 지표</th><th>정책 수단</th><th>소관</th></tr>
+<tr><td><b>직종 분리·직무 저평가</b></td><td>직종 간 분포 차이 -6%, 여성비중 10%p당 시급 -2.4%</td><td>직무가치 평가도구 보급, 사회서비스 임금 가이드라인, 여성 집중 직군의 숙련 인정 체계</td><td>고용노동부, 성평등가족부</td></tr>
+<tr><td><b>근무부담(초과근로)</b></td><td>초과근로 기여 3.4%, 남 13.1h / 여 6.7h</td><td>기본급 중심 임금체계 개편, 장시간 근로 의존 해소, 돌봄과 병행 가능한 근로시간 제도</td><td>고용노동부</td></tr>
+<tr><td><b>위험 노출</b></td><td>산재 자료 수집 후 산출</td><td>위험수당보다 위험 자체 감소: 고위험 업종 안전보건 투자, 여성 진입 시 작업환경·보호구 개선</td><td>고용노동부, 한국산업안전보건공단</td></tr>
+<tr><td><b>설명되지 않는 격차</b></td><td>동일 조건 잔여 51%</td><td>성별임금 공시 확대, AA 사업장 점검지표화, 임금 결정 투명성 강화</td><td>고용노동부, 성평등가족부</td></tr>
+<tr><td><b>통계 공백</b></td><td>산재 직종×성별 미공표, 근로환경조사-임금 미연계</td><td>직종×성별 재해 통계 공표, 조사 간 연계 키 마련</td><td>국가데이터처</td></tr>
+</table></div>
+</section>
+
+<section id="s7">
+  <h2>7. 데이터 수집·정제 파이프라인과 방법론</h2>
+  <p>매년(고용형태별근로실태조사) 또는 매월 갱신되는 공공통계를 <b>API로 자동 수집하고, 결측·코드 불일치를 정제해 분석·리포트까지 재생성하는 파이프라인</b>을 구축했습니다. GitHub Actions가 정해진 일정에 파이프라인을 실행하고, 새 연도가 공표되면 이 리포트의 수치와 문장이 자동으로 바뀝니다.</p>
+<div class="pipe">
+<div><b>① 수집 collect</b>KOSIS 공유서비스 API(4만 셀 제한 대응 연도 분할), 공공데이터포털 파일데이터 API. 최신 연도 자동 탐지, 증분 수집</div>
+<div><b>② 정제 clean</b>결측·비공개 기호('-','x','…') 처리, 분류 순서 자동 식별, 직종·산업 명칭→표준코드, 산재보험 업종→KSIC 교차표, 단위 통일</div>
+<div><b>③ 검증 QA</b>임금 구성 합계(정액+초과+특별) 대조, 남+여=전체 대조, 미매핑 코드·중복 집계 → 품질 리포트</div>
+<div><b>④ 분석 analyze</b>shift-share 분해, 던컨 지수, 가중 회귀·Oaxaca-Blinder, 재해율 결합</div>
+<div><b>⑤ 리포트 report</b>결과 수치로 문장·차트를 생성한 단일 HTML(오프라인·인쇄 가능)</div>
+</div>
+<h3>수집 원천과 수집 현황</h3>
+<div class="card tbl-wrap"><table><tr><th>자료</th><th>통계표/데이터셋 ID</th><th>파일 수</th><th>행 수</th></tr><tr><td>직종·학력·연령계층·성별 임금 및 근로조건 (고용형태별근로실태조사)</td><td>DT_118N_PAYM42</td><td>6</td><td>128,772</td></tr><tr><td>산업·학력·연령계층·성별 임금 및 근로조건 (고용형태별근로실태조사)</td><td>DT_118N_PAYN42</td><td>6</td><td>246,974</td></tr><tr><td>직종·경력년수·성별 임금 및 근로조건 (고용형태별근로실태조사)</td><td>DT_118N_PAYM37</td><td>0</td><td>0</td></tr><tr><td>한국산업안전보건공단_산업중분류별 발생형태별 사고재해자수</td><td>15084677</td><td>6</td><td>2,040</td></tr><tr><td>근로복지공단_성별 산재처리현황</td><td>15117426</td><td>0</td><td>0</td></tr></table></div>
+<h3>정제 품질 리포트</h3>
+<div class="card tbl-wrap"><table><tr><th>테이블</th><th>상태</th><th>원본 행</th><th>결측·비공개 기호</th><th>미매핑 라벨 종류</th><th>임금구성 불일치/검사</th></tr><tr><td>wage_occ</td><td>ok</td><td>128,772</td><td>0</td><td>0</td><td>0/9198</td></tr><tr><td>wage_ind</td><td>ok</td><td>246,974</td><td>0</td><td>0</td><td>0/17641</td></tr><tr><td>wage_occ_career</td><td>no_raw_files</td><td>–</td><td>0</td><td>0</td><td>–</td></tr><tr><td>injury_micro</td><td>no_raw_files</td><td>–</td><td>0</td><td>0</td><td>–</td></tr><tr><td>injury_manual</td><td>not_provided</td><td>–</td><td>0</td><td>0</td><td>–</td></tr><tr><td>kwcs</td><td>not_provided</td><td>–</td><td>0</td><td>0</td><td>–</td></tr></table></div>
+<h3>분석 방법</h3>
+<ul><li>시간당 임금 = 월 임금총액 ÷ 월 총근로시간. 집계는 근로자 수×근로시간 가중으로 해 공표 총계와 일치하도록 함</li><li>직종 분리 효과: Δ = Σ(s<sub>m</sub>−s<sub>f</sub>)·(w<sub>m</sub>+w<sub>f</sub>)/2 [분포 차이] + Σ(s<sub>m</sub>+s<sub>f</sub>)/2·(w<sub>m</sub>−w<sub>f</sub>) [직종 내 차이], 정확 분해</li><li>요인분해: ln(시간당임금) = 직종(산업)·학력·연령·연도 더미 + 평균근속 + 초과근로 비중 + 재해율(산업×성별) + 여성 더미, 근로자 수 가중 WLS. 풀드 계수로 Oaxaca-Blinder 분해(Fortin 2008; Jann 2008)</li><li>재해율 = 산업×성별 재해자 수 ÷ 같은 산업×성별 근로자 수 × 10,000</li></ul>
+<h3>한계</h3>
+<ul><li>개인 단위 원자료가 아닌 공표 집계 셀을 사용한 분석으로, 셀 안의 개인 차이(세부 직무, 경력단절 등)는 통제되지 않음</li><li>재해율의 분자(산재 승인)와 분모(임금조사 근로자 수)는 출처·분류체계가 달라 교차표로 맞춘 추정치. 여성의 산재 신청률이 낮을 가능성(과소보고)도 있음</li><li>재해율은 산업×성별 수준 변수이므로 ‘같은 산업 안 남녀 위험 차이’로만 식별되며, 인과효과가 아닌 상관 추정치임</li><li>교대·야간근무는 근로환경조사 집계 입력 시에만 반영됨</li></ul>
+</section>
+
+<footer>자료: 고용노동부 「고용형태별근로실태조사」, 한국산업안전보건공단 「산업재해통계」, 안전보건공단 「근로환경조사」(입력 시). KOSIS·공공데이터포털 API로 수집. 코드·파이프라인은 저장소 README 참고.</footer>
+</main>
+
+<script type="application/json" id="data">{"headline": {"year": 2025, "hourly": {"M": 31539.9, "F": 23411.7}, "monthly": {"M": 5182000.0, "F": 3486000.0}, "hours_total": {"M": 164.3, "F": 148.9}, "hours_overtime": {"M": 13.1, "F": 6.7}, "wage_overtime": {"M": 365000.0, "F": 158000.0}, "tenure": {"M": 8.1, "F": 5.8}, "workers": {"M": 7286093.0, "F": 5127765.0}, "hourly_ratio": 74.2, "monthly_ratio": 67.3, "trend": [{"year": 2020, "hourly_m": 23753.0, "hourly_f": 16971.0, "ratio": 71.4}, {"year": 2021, "hourly_m": 24286.0, "hourly_f": 17361.0, "ratio": 71.5}, {"year": 2022, "hourly_m": 27589.0, "hourly_f": 19804.0, "ratio": 71.8}, {"year": 2023, "hourly_m": 27922.0, "hourly_f": 20260.0, "ratio": 72.6}, {"year": 2024, "hourly_m": 30815.0, "hourly_f": 22500.0, "ratio": 73.0}, {"year": 2025, "hourly_m": 31540.0, "hourly_f": 23412.0, "ratio": 74.2}]}, "seg_occ": {"year": 2025, "gap_won": 8129.0, "W_m": 31544.0, "W_f": 23415.0, "between_won": -453.0, "within_won": 8582.0, "between_pct": -5.6, "within_pct": 105.6, "duncan_index": 27.1, "female_share_wage_slope_pct_per10pp": -2.37, "monthly_gap_components": {"wage_fixed": 1147846.0, "wage_overtime": 140869.0, "wage_special_m": 299906.0}, "rows": [{"code": "4", "name": "서비스", "female_share": 78.2, "emp_share_m": 2.9, "emp_share_f": 14.6, "hourly_m": 19785.0, "hourly_f": 15933.0, "hourly_all": 16980.0, "ratio": 80.5, "overtime_h_m": 16.6, "overtime_h_f": 6.1, "monthly_gap_components": {"wage_fixed": 923000.0, "wage_overtime": 251000.0, "wage_special_m": 143000.0}, "between_contrib": -1677.0, "within_contrib": 294.0}, {"code": "9", "name": "단순노무", "female_share": 49.9, "emp_share_m": 7.1, "emp_share_f": 10.0, "hourly_m": 17224.0, "hourly_f": 15589.0, "hourly_all": 16465.0, "ratio": 90.5, "overtime_h_m": 16.6, "overtime_h_f": 11.1, "monthly_gap_components": {"wage_fixed": 401000.0, "wage_overtime": 161000.0, "wage_special_m": 70000.0}, "between_contrib": -432.0, "within_contrib": 142.0}, {"code": "3", "name": "사무", "female_share": 48.5, "emp_share_m": 24.3, "emp_share_f": 32.6, "hourly_m": 36151.0, "hourly_f": 26563.0, "hourly_all": 31574.0, "ratio": 73.5, "overtime_h_m": 7.8, "overtime_h_f": 4.5, "monthly_gap_components": {"wage_fixed": 1232000.0, "wage_overtime": 117000.0, "wage_special_m": 311000.0}, "between_contrib": -3190.0, "within_contrib": 2747.0}, {"code": "2", "name": "전문가", "female_share": 44.7, "emp_share_m": 27.9, "emp_share_f": 32.0, "hourly_m": 38886.0, "hourly_f": 26219.0, "hourly_all": 33350.0, "ratio": 67.4, "overtime_h_m": 8.6, "overtime_h_f": 5.7, "monthly_gap_components": {"wage_fixed": 1596000.0, "wage_overtime": 115000.0, "wage_special_m": 440000.0}, "between_contrib": -1880.0, "within_contrib": 3741.0}, {"code": "5", "name": "판매", "female_share": 39.2, "emp_share_m": 4.7, "emp_share_f": 4.3, "hourly_m": 30446.0, "hourly_f": 19852.0, "hourly_all": 26464.0, "ratio": 65.2, "overtime_h_m": 7.1, "overtime_h_f": 6.1, "monthly_gap_components": {"wage_fixed": 1531000.0, "wage_overtime": 50000.0, "wage_special_m": 308000.0}, "between_contrib": 64.0, "within_contrib": 467.0}, {"code": "1", "name": "관리자", "female_share": 13.6, "emp_share_m": 1.4, "emp_share_f": 0.3, "hourly_m": 82250.0, "hourly_f": 70013.0, "hourly_all": 80593.0, "ratio": 85.1, "overtime_h_m": 4.2, "overtime_h_f": 3.2, "monthly_gap_components": {"wage_fixed": 1682000.0, "wage_overtime": 75000.0, "wage_special_m": 214000.0}, "between_contrib": 782.0, "within_contrib": 104.0}, {"code": "6", "name": "농림어업", "female_share": 13.3, "emp_share_m": 0.3, "emp_share_f": 0.1, "hourly_m": 18554.0, "hourly_f": 14764.0, "hourly_all": 18064.0, "ratio": 79.6, "overtime_h_m": 12.0, "overtime_h_f": 8.6, "monthly_gap_components": {"wage_fixed": 571000.0, "wage_overtime": 96000.0, "wage_special_m": 64000.0}, "between_contrib": 46.0, "within_contrib": 8.0}, {"code": "8", "name": "장치·기계조작", "female_share": 12.9, "emp_share_m": 21.9, "emp_share_f": 4.6, "hourly_m": 24491.0, "hourly_f": 20229.0, "hourly_all": 23960.0, "ratio": 82.6, "overtime_h_m": 24.6, "overtime_h_f": 20.7, "monthly_gap_components": {"wage_fixed": 493000.0, "wage_overtime": 187000.0, "wage_special_m": 209000.0}, "between_contrib": 4103.0, "within_contrib": 616.0}, {"code": "7", "name": "기능원", "female_share": 9.5, "emp_share_m": 9.4, "emp_share_f": 1.4, "hourly_m": 25627.0, "hourly_f": 17311.0, "hourly_all": 24860.0, "ratio": 67.5, "overtime_h_m": 13.9, "overtime_h_f": 10.7, "monthly_gap_components": {"wage_fixed": 998000.0, "wage_overtime": 174000.0, "wage_special_m": 324000.0}, "between_contrib": 1732.0, "within_contrib": 463.0}]}, "seg_ind": {"year": 2025, "gap_won": 8126.0, "W_m": 31542.0, "W_f": 23416.0, "between_won": 23.0, "within_won": 8102.0, "between_pct": 0.3, "within_pct": 99.7, "duncan_index": 34.6, "female_share_wage_slope_pct_per10pp": -4.12, "monthly_gap_components": {"wage_fixed": 1123725.0, "wage_overtime": 153884.0, "wage_special_m": 251599.0}, "rows": [{"code": "Q", "name": "보건·사회복지", "female_share": 83.5, "emp_share_m": 4.3, "emp_share_f": 31.1, "hourly_m": 33411.0, "hourly_f": 20450.0, "hourly_all": 22762.0, "ratio": 61.2, "overtime_h_m": 8.9, "overtime_h_f": 5.3, "monthly_gap_components": {"wage_fixed": 1974000.0, "wage_overtime": 130000.0, "wage_special_m": 174000.0}, "between_contrib": -6791.0, "within_contrib": 2160.0}, {"code": "I", "name": "숙박·음식", "female_share": 60.4, "emp_share_m": 2.0, "emp_share_f": 4.3, "hourly_m": 18910.0, "hourly_f": 15722.0, "hourly_all": 17043.0, "ratio": 83.1, "overtime_h_m": 9.3, "overtime_h_f": 10.2, "monthly_gap_components": {"wage_fixed": 650000.0, "wage_overtime": 25000.0, "wage_special_m": 48000.0}, "between_contrib": -425.0, "within_contrib": 103.0}, {"code": "P", "name": "교육", "female_share": 55.4, "emp_share_m": 2.9, "emp_share_f": 5.1, "hourly_m": 34856.0, "hourly_f": 24831.0, "hourly_all": 29413.0, "ratio": 71.2, "overtime_h_m": 4.5, "overtime_h_f": 3.0, "monthly_gap_components": {"wage_fixed": 1281000.0, "wage_overtime": 27000.0, "wage_special_m": 193000.0}, "between_contrib": -616.0, "within_contrib": 343.0}, {"code": "K", "name": "금융·보험", "female_share": 48.5, "emp_share_m": 3.2, "emp_share_f": 4.3, "hourly_m": 52244.0, "hourly_f": 42581.0, "hourly_all": 47608.0, "ratio": 81.5, "overtime_h_m": 5.4, "overtime_h_f": 4.9, "monthly_gap_components": {"wage_fixed": 1151000.0, "wage_overtime": 29000.0, "wage_special_m": 441000.0}, "between_contrib": -643.0, "within_contrib": 360.0}, {"code": "N", "name": "사업시설·지원", "female_share": 47.8, "emp_share_m": 7.1, "emp_share_f": 9.2, "hourly_m": 25341.0, "hourly_f": 20481.0, "hourly_all": 23142.0, "ratio": 80.8, "overtime_h_m": 15.0, "overtime_h_f": 5.9, "monthly_gap_components": {"wage_fixed": 674000.0, "wage_overtime": 211000.0, "wage_special_m": 248000.0}, "between_contrib": -485.0, "within_contrib": 399.0}, {"code": "R", "name": "예술·여가", "female_share": 43.4, "emp_share_m": 0.9, "emp_share_f": 1.0, "hourly_m": 25059.0, "hourly_f": 20616.0, "hourly_all": 23231.0, "ratio": 82.3, "overtime_h_m": 9.6, "overtime_h_f": 7.1, "monthly_gap_components": {"wage_fixed": 828000.0, "wage_overtime": 88000.0, "wage_special_m": 107000.0}, "between_contrib": -20.0, "within_contrib": 43.0}, {"code": "G", "name": "도소매", "female_share": 40.6, "emp_share_m": 9.4, "emp_share_f": 9.2, "hourly_m": 32650.0, "hourly_f": 23968.0, "hourly_all": 29210.0, "ratio": 73.4, "overtime_h_m": 7.0, "overtime_h_f": 5.5, "monthly_gap_components": {"wage_fixed": 1279000.0, "wage_overtime": 59000.0, "wage_special_m": 207000.0}, "between_contrib": -75.0, "within_contrib": 810.0}, {"code": "S", "name": "기타개인서비스", "female_share": 37.4, "emp_share_m": 2.0, "emp_share_f": 1.7, "hourly_m": 24707.0, "hourly_f": 18334.0, "hourly_all": 22430.0, "ratio": 74.2, "overtime_h_m": 6.0, "overtime_h_f": 4.4, "monthly_gap_components": {"wage_fixed": 940000.0, "wage_overtime": 71000.0, "wage_special_m": 247000.0}, "between_contrib": 54.0, "within_contrib": 116.0}, {"code": "M", "name": "전문·과학기술", "female_share": 34.5, "emp_share_m": 9.8, "emp_share_f": 7.3, "hourly_m": 41009.0, "hourly_f": 29722.0, "hourly_all": 37150.0, "ratio": 72.5, "overtime_h_m": 7.1, "overtime_h_f": 5.7, "monthly_gap_components": {"wage_fixed": 1314000.0, "wage_overtime": 62000.0, "wage_special_m": 448000.0}, "between_contrib": 611.0, "within_contrib": 954.0}, {"code": "L", "name": "부동산", "female_share": 34.1, "emp_share_m": 2.7, "emp_share_f": 2.0, "hourly_m": 20866.0, "hourly_f": 18857.0, "hourly_all": 20296.0, "ratio": 90.4, "overtime_h_m": 2.7, "overtime_h_f": 1.5, "monthly_gap_components": {"wage_fixed": 962000.0, "wage_overtime": 74000.0, "wage_special_m": 105000.0}, "between_contrib": 219.0, "within_contrib": 48.0}, {"code": "J", "name": "정보통신", "female_share": 33.8, "emp_share_m": 5.8, "emp_share_f": 4.2, "hourly_m": 38134.0, "hourly_f": 29063.0, "hourly_all": 35093.0, "ratio": 76.2, "overtime_h_m": 5.8, "overtime_h_f": 5.1, "monthly_gap_components": {"wage_fixed": 1150000.0, "wage_overtime": 55000.0, "wage_special_m": 255000.0}, "between_contrib": 383.0, "within_contrib": 443.0}, {"code": "A", "name": "농림어업", "female_share": 26.8, "emp_share_m": 0.3, "emp_share_f": 0.2, "hourly_m": 23378.0, "hourly_f": 19698.0, "hourly_all": 22426.0, "ratio": 84.3, "overtime_h_m": 8.5, "overtime_h_f": 6.4, "monthly_gap_components": {"wage_fixed": 558000.0, "wage_overtime": 53000.0, "wage_special_m": 176000.0}, "between_contrib": 34.0, "within_contrib": 10.0}, {"code": "C", "name": "제조업", "female_share": 23.6, "emp_share_m": 34.2, "emp_share_f": 15.0, "hourly_m": 30394.0, "hourly_f": 22878.0, "hourly_all": 28699.0, "ratio": 75.3, "overtime_h_m": 21.4, "overtime_h_f": 13.4, "monthly_gap_components": {"wage_fixed": 840000.0, "wage_overtime": 297000.0, "wage_special_m": 386000.0}, "between_contrib": 5201.0, "within_contrib": 1967.0}, {"code": "H", "name": "운수·창고", "female_share": 21.8, "emp_share_m": 6.3, "emp_share_f": 2.5, "hourly_m": 26227.0, "hourly_f": 25896.0, "hourly_all": 26159.0, "ratio": 98.7, "overtime_h_m": 16.3, "overtime_h_f": 9.6, "monthly_gap_components": {"wage_fixed": 251000.0, "wage_overtime": 214000.0, "wage_special_m": -125000.0}, "between_contrib": 984.0, "within_contrib": 15.0}, {"code": "D", "name": "전기·가스", "female_share": 20.1, "emp_share_m": 0.7, "emp_share_f": 0.2, "hourly_m": 45303.0, "hourly_f": 37294.0, "hourly_all": 43753.0, "ratio": 82.3, "overtime_h_m": 9.2, "overtime_h_f": 3.1, "monthly_gap_components": {"wage_fixed": 849000.0, "wage_overtime": 248000.0, "wage_special_m": 503000.0}, "between_contrib": 178.0, "within_contrib": 38.0}, {"code": "F", "name": "건설업", "female_share": 19.0, "emp_share_m": 7.1, "emp_share_f": 2.4, "hourly_m": 29007.0, "hourly_f": 23200.0, "hourly_all": 27939.0, "ratio": 80.0, "overtime_h_m": 7.6, "overtime_h_f": 3.7, "monthly_gap_components": {"wage_fixed": 874000.0, "wage_overtime": 129000.0, "wage_special_m": 74000.0}, "between_contrib": 1168.0, "within_contrib": 272.0}, {"code": "E", "name": "수도·폐기물", "female_share": 15.1, "emp_share_m": 1.1, "emp_share_f": 0.3, "hourly_m": 26399.0, "hourly_f": 24223.0, "hourly_all": 26099.0, "ratio": 91.8, "overtime_h_m": 17.9, "overtime_h_f": 5.4, "monthly_gap_components": {"wage_fixed": 326000.0, "wage_overtime": 443000.0, "wage_special_m": 51000.0}, "between_contrib": 219.0, "within_contrib": 16.0}, {"code": "B", "name": "광업", "female_share": 11.6, "emp_share_m": 0.1, "emp_share_f": 0.0, "hourly_m": 28223.0, "hourly_f": 21587.0, "hourly_all": 27506.0, "ratio": 76.5, "overtime_h_m": 22.5, "overtime_h_f": 11.5, "monthly_gap_components": {"wage_fixed": 837000.0, "wage_overtime": 362000.0, "wage_special_m": 275000.0}, "between_contrib": 26.0, "within_contrib": 5.0}]}, "oaxaca_occ": {"n_cells": 1919, "r2": 0.959, "total_log_gap": 0.304, "total_pct": 26.2, "contrib_log": {"segregation": -0.0145, "human_capital": 0.1548, "working_time": 0.0103, "_year": -0.0008}, "contrib_share": {"segregation": -4.8, "human_capital": 50.9, "working_time": 3.4, "_year": -0.3}, "unexplained_log": 0.1543, "unexplained_share": 50.7, "coef": {"tenure": {"b": 0.06373, "se": 0.00195}, "ot_share": {"b": 0.32353, "se": 0.20907}, "female": {"b": -0.15426, "se": 0.00852}}, "means": {"tenure": {"M": 7.7835, "F": 5.5461}, "ot_share": {"M": 0.073, "F": 0.0411}}, "years": [2023, 2024, 2025]}}</script>
+<script>
+(function(){
+"use strict";
+const D = JSON.parse(document.getElementById("data").textContent);
+const NS = "http://www.w3.org/2000/svg";
+const fmt = (v, d=0) => v == null ? "–" : Number(v).toLocaleString("ko-KR", {minimumFractionDigits:d, maximumFractionDigits:d});
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function el(tag, attrs={}, parent){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function txt(parent, x, y, s, attrs={}){ const t=el("text",{x,y,...attrs},parent); t.textContent=s; return t; }
+function svg(id, w, h){ const host=document.getElementById(id); host.textContent=""; const s=el("svg",{viewBox:`0 0 ${w} ${h}`,role:"img"},host); return s; }
+function nice(max){ const p=Math.pow(10,Math.floor(Math.log10(max))); const m=max/p; return (m<=1?1:m<=2?2:m<=5?5:10)*p; }
+function ticks(lo, hi, n=5){ const step=nice((hi-lo)/n); const out=[]; for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) out.push(+v.toFixed(10)); return out; }
+// 둥근 끝(4px)·기준선 쪽은 직각인 막대
+function bar(g, x, y, w, h, fill, dir){ // dir: 'up','down','right','left'
+  const r=Math.min(4, Math.abs(dir==="up"||dir==="down"?h:w)/2, Math.abs(dir==="up"||dir==="down"?w:h)/2);
+  let d;
+  if(dir==="up") d=`M${x},${y+h}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h}Z`;
+  else if(dir==="down") d=`M${x},${y}V${y+h-r}Q${x},${y+h} ${x+r},${y+h}H${x+w-r}Q${x+w},${y+h} ${x+w},${y+h-r}V${y}Z`;
+  else if(dir==="right") d=`M${x},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h-r}Q${x+w},${y+h} ${x+w-r},${y+h}H${x}Z`;
+  else d=`M${x+w},${y}H${x+r}Q${x},${y} ${x},${y+r}V${y+h-r}Q${x},${y+h} ${x+r},${y+h}H${x+w}Z`;
+  return el("path",{d,fill},g);
+}
+// 툴팁: 값이 먼저, 라벨은 뒤 (textContent 로만 삽입)
+const tip=document.getElementById("tip");
+function showTip(ev, title, rows){
+  tip.textContent="";
+  const h=document.createElement("div"); h.style.color="var(--ink2)"; h.textContent=title; tip.appendChild(h);
+  for(const r of rows){ const row=document.createElement("div"); row.className="row";
+    if(r.color){ const k=document.createElement("i"); k.className="key"; k.style.background=r.color; row.appendChild(k); }
+    const v=document.createElement("span"); v.className="tv"; v.textContent=r.value; row.appendChild(v);
+    const l=document.createElement("span"); l.style.color="var(--ink2)"; l.textContent=r.label; row.appendChild(l); tip.appendChild(row); }
+  const x=Math.min(ev.clientX+14, window.innerWidth-300), y=ev.clientY+14; tip.style.left=x+"px"; tip.style.top=y+"px"; tip.style.opacity=1;
+}
+function hideTip(){ tip.style.opacity=0; }
+function hover(node, fn){ node.setAttribute("tabindex","0"); node.style.cursor="default";
+  node.addEventListener("pointermove", e=>fn(e)); node.addEventListener("pointerleave", hideTip);
+  node.addEventListener("focus", ()=>{ const b=node.getBoundingClientRect(); fn({clientX:b.right, clientY:b.top}); }); node.addEventListener("blur", hideTip); }
+function table(id, head, rows){ const host=document.getElementById(id); if(!host) return; host.textContent="";
+  const t=document.createElement("table"); const tr=document.createElement("tr");
+  head.forEach(h=>{const th=document.createElement("th"); th.textContent=h; tr.appendChild(th);}); t.appendChild(tr);
+  rows.forEach(r=>{const tr=document.createElement("tr"); r.forEach(c=>{const td=document.createElement("td"); td.textContent=c; tr.appendChild(td);}); t.appendChild(tr);});
+  host.appendChild(t); }
+
+// ---------------------------------------------------------------- 1. 추이 (선)
+function trend(){
+  const data=D.headline.trend; if(!data.length) return;
+  const W=900,H=260,m={l:44,r:60,t:16,b:30};
+  const s=svg("chart-trend",W,H);
+  const ys=data.map(d=>d.ratio); const lo=Math.floor(Math.min(...ys)-3), hi=Math.ceil(Math.max(...ys)+3);
+  const x=i=>m.l+(data.length===1?0:(i/(data.length-1))*(W-m.l-m.r)); const y=v=>m.t+(hi-v)/(hi-lo)*(H-m.t-m.b);
+  ticks(lo,hi,4).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:css("--grid")},s); txt(s,m.l-8,y(v)+4,fmt(v),{"text-anchor":"end"}); });
+  data.forEach((d,i)=>txt(s,x(i),H-8,d.year+"년",{"text-anchor":"middle"}));
+  el("path",{d:data.map((d,i)=>(i?"L":"M")+x(i)+","+y(d.ratio)).join(""),fill:"none",stroke:css("--female"),"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"},s);
+  const last=data[data.length-1];
+  el("circle",{cx:x(data.length-1),cy:y(last.ratio),r:4.5,fill:css("--female"),stroke:css("--surface"),"stroke-width":2},s);
+  txt(s,x(data.length-1)+10,y(last.ratio)+4,fmt(last.ratio,1)+"%",{class:"lab-strong"});
+  const cross=el("line",{y1:m.t,y2:H-m.b,stroke:css("--axis"),opacity:0},s);
+  const hit=el("rect",{x:m.l-20,y:0,width:W-m.l-m.r+40,height:H,fill:"transparent"},s);
+  hover(hit,e=>{ const r=s.getBoundingClientRect(); const px=(e.clientX-r.left)/r.width*W;
+    let i=Math.round((px-m.l)/((W-m.l-m.r)/Math.max(1,data.length-1))); i=Math.max(0,Math.min(data.length-1,i)); const d=data[i];
+    cross.setAttribute("x1",x(i)); cross.setAttribute("x2",x(i)); cross.setAttribute("opacity",1);
+    showTip(e,d.year+"년",[{value:fmt(d.ratio,1)+"%",label:"여성/남성",color:css("--female")},{value:fmt(d.hourly_m)+"원",label:"남성 시간당",color:css("--male")},{value:fmt(d.hourly_f)+"원",label:"여성 시간당",color:css("--female")}]); });
+  hit.addEventListener("pointerleave",()=>cross.setAttribute("opacity",0));
+}
+
+// ---------------------------------------------------------------- 2. 덤벨 (직종별 남녀 시급)
+function dumbbell(){
+  const rows=D.seg_occ.rows; const W=900,rowH=34,m={l:150,r:70,t:20,b:28}; const H=m.t+m.b+rows.length*rowH;
+  const s=svg("chart-dumbbell",W,H);
+  const mx=Math.max(...rows.map(r=>Math.max(r.hourly_m,r.hourly_f))); const hi=nice(mx/4)*Math.ceil(mx/nice(mx/4));
+  const x=v=>m.l+v/hi*(W-m.l-m.r);
+  ticks(0,hi,5).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t-6,y2:H-m.b,stroke:css("--grid")},s); txt(s,x(v),H-8,v>=10000?fmt(v/10000,1)+"만":fmt(v),{"text-anchor":"middle"}); });
+  rows.forEach((r,i)=>{ const cy=m.t+i*rowH+rowH/2;
+    txt(s,8,cy-2,r.name,{class:"lab-strong"}); txt(s,8,cy+13,"여성 "+fmt(r.female_share,0)+"%",{"font-size":11});
+    el("line",{x1:x(r.hourly_f),x2:x(r.hourly_m),y1:cy,y2:cy,stroke:css("--axis"),"stroke-width":2},s);
+    el("circle",{cx:x(r.hourly_m),cy,r:5,fill:css("--male"),stroke:css("--surface"),"stroke-width":2},s);
+    el("circle",{cx:x(r.hourly_f),cy,r:5,fill:css("--female"),stroke:css("--surface"),"stroke-width":2},s);
+    txt(s,Math.max(x(r.hourly_m),x(r.hourly_f))+10,cy+4,fmt(r.ratio,0)+"%",{});
+    const hit=el("rect",{x:0,y:cy-rowH/2,width:W,height:rowH,fill:"transparent"},s);
+    hover(hit,e=>showTip(e,r.name+" (여성 비중 "+fmt(r.female_share,1)+"%)",[{value:fmt(r.hourly_m)+"원",label:"남성",color:css("--male")},{value:fmt(r.hourly_f)+"원",label:"여성",color:css("--female")},{value:fmt(r.ratio,1)+"%",label:"여성/남성"}]));
+  });
+  table("tbl-occ",["직종","여성 비중(%)","남성 시급","여성 시급","여성/남성(%)","남 초과근로(h)","여 초과근로(h)"],
+    rows.map(r=>[r.name,fmt(r.female_share,1),fmt(r.hourly_m),fmt(r.hourly_f),fmt(r.ratio,1),fmt(r.overtime_h_m,1),fmt(r.overtime_h_f,1)]));
+}
+
+// ---------------------------------------------------------------- 2-2. shift-share 가로 누적막대
+function shift(key){
+  const S=D[key]; const host="chart-shift"; if(!S){ document.getElementById(host).textContent="해당 자료가 없습니다."; return; }
+  const W=900,H=96,m={l:8,r:8,t:28,b:20}; const s=svg(host,W,H);
+  const tot=S.between_won+S.within_won; const x=v=>m.l+v/tot*(W-m.l-m.r);
+  const parts=[{v:S.between_won,c:css("--total"),lab:"분포 차이",pct:S.between_pct},{v:S.within_won,c:css("--female"),lab:"같은 직종 안",pct:S.within_pct}];
+  let acc=0; parts.forEach((p,i)=>{ const w=Math.max(0,x(acc+p.v)-x(acc)-(i?0:2)); const g=el("g",{},s);
+    const r=el("rect",{x:x(acc)+(i?0:0),y:m.t,width:w,height:28,rx:4,fill:p.c},g);
+    const label=fmt(p.pct,0)+"% · "+fmt(p.v)+"원"; if(w>150) txt(g,x(acc)+10,m.t+19,label,{fill:"#fff","font-weight":600,style:"fill:#fff"});
+    hover(r,e=>showTip(e,p.lab,[{value:fmt(p.v)+"원",label:"("+fmt(p.pct,1)+"%)",color:p.c}])); acc+=p.v; });
+  txt(s,m.l,16,"남성 "+fmt(S.W_m)+"원 − 여성 "+fmt(S.W_f)+"원 = 격차 "+fmt(S.gap_won)+"원 (던컨 분리지수 "+fmt(S.duncan_index,1)+")",{class:"lab-strong"});
+}
+
+// ---------------------------------------------------------------- 3. 임금구성 차이 (직종별 누적 가로막대, 음수 허용)
+function components(){
+  const rows=D.seg_occ.rows.filter(r=>r.monthly_gap_components && r.monthly_gap_components.wage_fixed!=null);
+  const keys=[["wage_fixed","정액급여",css("--total")],["wage_overtime","초과급여",css("--male")],["wage_special_m","특별급여",css("--female")==="#e76624"?"#00a888":"#00b894"]];
+  const W=900,rowH=30,m={l:110,r:80,t:10,b:28}; const H=m.t+m.b+rows.length*rowH; const s=svg("chart-components",W,H);
+  let lo=0,hi=0; rows.forEach(r=>{ let p=0,n=0; keys.forEach(([k])=>{const v=r.monthly_gap_components[k]||0; v>0?p+=v:n+=v;}); hi=Math.max(hi,p); lo=Math.min(lo,n); });
+  const step=nice((hi-lo)/5); hi=Math.ceil(hi/step)*step; lo=Math.floor(lo/step)*step;
+  const x=v=>m.l+(v-lo)/(hi-lo)*(W-m.l-m.r);
+  ticks(lo,hi,5).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:v===0?css("--axis"):css("--grid")},s); txt(s,x(v),H-8,fmt(v/10000)+"만",{"text-anchor":"middle"}); });
+  rows.forEach((r,i)=>{ const y=m.t+i*rowH+(rowH-18)/2; txt(s,8,y+13,r.name,{class:"lab-strong"});
+    let pos=0,neg=0,total=0;
+    keys.forEach(([k,lab,c],j)=>{ const v=r.monthly_gap_components[k]||0; total+=v; if(!v) return;
+      let x0,x1; if(v>0){x0=pos;x1=pos+v;pos=x1;} else {x1=neg;x0=neg+v;neg=x0;}
+      const px0=x(x0)+(v>0&&x0!==0?1:0), px1=x(x1)-(v<0&&x1!==0?1:0);
+      const isEnd=(v>0&&x1===pos)||(v<0&&x0===neg);
+      const node=el("rect",{x:px0,y,width:Math.max(1,px1-px0-1),height:18,rx:isEnd?3:0,fill:c},s);
+      hover(node,e=>showTip(e,r.name,[{value:fmt(v)+"원",label:lab+" 차이",color:c}]));
+    });
+    txt(s,x(pos)+8,y+13,fmt(total/10000,0)+"만원",{});
+  });
+}
+
+// ---------------------------------------------------------------- 3-2. 초과근로 덤벨
+function overtime(){
+  const rows=D.seg_occ.rows; const W=900,rowH=28,m={l:110,r:60,t:10,b:28}; const H=m.t+m.b+rows.length*rowH; const s=svg("chart-overtime",W,H);
+  const mx=Math.max(...rows.map(r=>Math.max(r.overtime_h_m||0,r.overtime_h_f||0))); const hi=Math.ceil(mx/5)*5;
+  const x=v=>m.l+v/hi*(W-m.l-m.r);
+  ticks(0,hi,5).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:css("--grid")},s); txt(s,x(v),H-8,fmt(v)+"h",{"text-anchor":"middle"}); });
+  rows.forEach((r,i)=>{ const cy=m.t+i*rowH+rowH/2; txt(s,8,cy+4,r.name,{class:"lab-strong"});
+    el("line",{x1:x(r.overtime_h_f),x2:x(r.overtime_h_m),y1:cy,y2:cy,stroke:css("--axis"),"stroke-width":2},s);
+    el("circle",{cx:x(r.overtime_h_m),cy,r:5,fill:css("--male"),stroke:css("--surface"),"stroke-width":2},s);
+    el("circle",{cx:x(r.overtime_h_f),cy,r:5,fill:css("--female"),stroke:css("--surface"),"stroke-width":2},s);
+    const hit=el("rect",{x:0,y:cy-rowH/2,width:W,height:rowH,fill:"transparent"},s);
+    hover(hit,e=>showTip(e,r.name+" 월 초과근로",[{value:fmt(r.overtime_h_m,1)+"시간",label:"남성",color:css("--male")},{value:fmt(r.overtime_h_f,1)+"시간",label:"여성",color:css("--female")}]));
+  });
+}
+
+// ---------------------------------------------------------------- 4. 버블
+function bubble(){
+  const B=D.bubble; if(!B||!B.length){ document.getElementById("fig-bubble").style.display="none"; return; }
+  const W=900,H=500,m={l:64,r:30,t:36,b:44}; const s=svg("chart-bubble",W,H);
+  const xmax=nice(Math.max(...B.map(b=>b.injury_rate))/5)*Math.ceil(Math.max(...B.map(b=>b.injury_rate))/nice(Math.max(...B.map(b=>b.injury_rate))/5));
+  const ymin0=Math.min(...B.map(b=>b.hourly)), ymax0=Math.max(...B.map(b=>b.hourly)); const st=nice((ymax0-ymin0)/5);
+  const ylo=Math.floor(ymin0/st)*st-st, yhi=Math.ceil(ymax0/st)*st;
+  const x=v=>m.l+v/xmax*(W-m.l-m.r), y=v=>m.t+(yhi-v)/(yhi-ylo)*(H-m.t-m.b);
+  const wmax=Math.max(...B.map(b=>b.workers)); const rad=v=>4+Math.sqrt(v/wmax)*22;
+  ticks(0,xmax,6).forEach(v=>{ el("line",{x1:x(v),x2:x(v),y1:m.t,y2:H-m.b,stroke:css("--grid")},s); txt(s,x(v),H-m.b+18,fmt(v,v<10&&xmax<20?1:0),{"text-anchor":"middle"}); });
+  ticks(ylo,yhi,5).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:css("--grid")},s); txt(s,m.l-8,y(v)+4,fmt(v/10000,1)+"만",{"text-anchor":"end"}); });
+  txt(s,(m.l+W-m.r)/2,H-4,"재해율 (근로자 1만 명당 재해자 수)",{"text-anchor":"middle"});
+  txt(s,m.l-8,m.t-18,"시간당 임금(원)",{"text-anchor":"start"});
+  const byInd={}; B.forEach(b=>{(byInd[b.ind]=byInd[b.ind]||{})[b.sex]=b;});
+  Object.values(byInd).forEach(p=>{ if(p.M&&p.F) el("line",{x1:x(p.M.injury_rate),y1:y(p.M.hourly),x2:x(p.F.injury_rate),y2:y(p.F.hourly),stroke:css("--axis"),"stroke-width":1},s); });
+  const sorted=[...B].sort((a,b)=>b.workers-a.workers);
+  sorted.forEach(b=>{ const c=b.sex==="M"?css("--male"):css("--female");
+    const g=el("g",{},s); el("circle",{cx:x(b.injury_rate),cy:y(b.hourly),r:rad(b.workers),fill:c,"fill-opacity":.55,stroke:css("--surface"),"stroke-width":2},g);
+    el("circle",{cx:x(b.injury_rate),cy:y(b.hourly),r:Math.max(12,rad(b.workers)),fill:"transparent"},g);
+    hover(g,e=>showTip(e,b.name+" · "+(b.sex==="M"?"남성":"여성"),[{value:fmt(b.hourly)+"원",label:"시간당 임금",color:c},{value:fmt(b.injury_rate,1),label:"재해율(1만명당)"},{value:fmt(b.workers)+"명",label:"근로자 수"},{value:fmt(b.overtime_h,1)+"시간",label:"월 초과근로"}]));
+  });
+  // 선택적 직접 라벨: 남성 재해율 상위 4개 + 여성 비중 큰 산업 2개
+  const males=B.filter(b=>b.sex==="M").sort((a,b)=>b.injury_rate-a.injury_rate).slice(0,4);
+  const fems=B.filter(b=>b.sex==="F").sort((a,b)=>b.workers-a.workers).slice(0,2);
+  [...males,...fems].forEach(b=>txt(s,x(b.injury_rate)+rad(b.workers)+4,y(b.hourly)+4,b.name,{class:"lab-strong","font-size":11.5}));
+  table("tbl-bubble",["산업","성별","시간당 임금","재해율(1만명당)","사망률(1만명당)","근로자 수"],
+    [...B].sort((a,b)=>a.ind.localeCompare(b.ind)||a.sex.localeCompare(b.sex)).map(b=>[b.name,b.sex==="M"?"남":"여",fmt(b.hourly),fmt(b.injury_rate,2),fmt(b.fatal_rate,3),fmt(b.workers)]));
+}
+
+// ---------------------------------------------------------------- 5. 폭포수
+const GROUP_LABEL={segregation:"직종·산업 분리",human_capital:"학력·연령·근속",working_time:"초과근로 비중",risk:"재해 위험 노출",shift_night:"교대·야간근무",_year:"연도 구성"};
+function waterfall(key){
+  const O=D[key]; const host="chart-waterfall"; if(!O){ document.getElementById(host).textContent="해당 모형 결과가 없습니다(재해 자료 미수집)."; return; }
+  const steps=[{lab:"전체 격차",v:O.total_log_gap*100,type:"total"}];
+  Object.entries(O.contrib_log).forEach(([k,v])=>{ if(k==="_year" && Math.abs(v*100)<0.3) return; steps.push({lab:GROUP_LABEL[k]||k,v:-v*100,type:"step",raw:v*100,share:O.contrib_share[k]}); });
+  steps.push({lab:"설명되지 않는 격차",v:O.unexplained_log*100,type:"total",share:O.unexplained_share});
+  const W=900,H=340,m={l:44,r:16,t:28,b:58}; const s=svg(host,W,H);
+  let run=0,lo=0,hi=0; const segs=steps.map(st=>{ if(st.type==="total"){ const r={...st,a:0,b:st.v}; run=st.v; return r; } const a=run,b=run+st.v; run=b; return {...st,a,b}; });
+  segs.forEach(sg=>{lo=Math.min(lo,sg.a,sg.b);hi=Math.max(hi,sg.a,sg.b);}); const step=nice((hi-lo)/5); hi=Math.ceil(hi/step)*step; lo=Math.floor(lo/step)*step;
+  const y=v=>m.t+(hi-v)/(hi-lo)*(H-m.t-m.b); const bw=(W-m.l-m.r)/segs.length; const barW=Math.min(48,bw*.6);
+  ticks(lo,hi,5).forEach(v=>{ el("line",{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:v===0?css("--axis"):css("--grid")},s); txt(s,m.l-8,y(v)+4,fmt(v),{"text-anchor":"end"}); });
+  segs.forEach((sg,i)=>{ const cx=m.l+bw*i+bw/2; const top=Math.max(sg.a,sg.b), bot=Math.min(sg.a,sg.b);
+    const c=sg.type==="total"?css("--total"):(sg.raw>0?css("--pos"):css("--neg"));
+    const h=Math.max(1,y(bot)-y(top)); const node=el("rect",{x:cx-barW/2,y:y(top),width:barW,height:h,rx:3,fill:c},s);
+    if(i<segs.length-1){ const nx=m.l+bw*(i+1)+bw/2; el("line",{x1:cx+barW/2,x2:nx-barW/2,y1:y(sg.b),y2:y(sg.b),stroke:css("--axis"),"stroke-dasharray":"0"},s); }
+    const val=sg.type==="total"?fmt(sg.v,1):(sg.raw>0?"+":"")+fmt(sg.raw,1);
+    txt(s,cx,y(top)-6,val+(sg.share!=null?" ("+fmt(sg.share,0)+"%)":""),{"text-anchor":"middle",class:"lab-strong","font-size":11.5});
+    const lines=[]; sg.lab.split(" ").forEach(w=>{ if(lines.length&&(lines[lines.length-1]+" "+w).length<=8) lines[lines.length-1]+=" "+w; else lines.push(w); });
+    lines.forEach((w,j)=>txt(s,cx,H-m.b+16+j*14,w,{"text-anchor":"middle"}));
+    hover(node,e=>showTip(e,sg.lab,[{value:val,label:"로그포인트×100",color:c},...(sg.share!=null?[{value:fmt(sg.share,1)+"%",label:"전체 격차 대비"}]:[])]));
+  });
+  const coefRows=Object.entries(O.coef).map(([k,c])=>[k,fmt(c.b,4),fmt(c.se,4),c.se?fmt(c.b/c.se,2):"–"]);
+  table("tbl-wf",["변수","계수","강건 표준오차","t"],coefRows);
+  document.getElementById("wf-src").textContent=`셀 수 ${fmt(O.n_cells)} · 가중 R² ${fmt(O.r2,3)} · 분석연도 ${O.years.join(", ")} · 근로자 수 가중 WLS, HC1 표준오차`;
+}
+
+function tabs(attr, fn){ document.querySelectorAll(`[data-${attr}]`).forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(`[data-${attr}]`).forEach(o=>o.setAttribute("aria-pressed",o===b?"true":"false")); fn(b.dataset[attr]); })); }
+function renderAll(){ trend(); dumbbell(); shift(document.querySelector('[data-seg][aria-pressed="true"]').dataset.seg); components(); overtime(); bubble();
+  const wf=document.querySelector('[data-wf][aria-pressed="true"]').dataset.wf; waterfall(D[wf]?wf:"oaxaca_occ"); }
+tabs("seg", shift); tabs("wf", waterfall);
+if(!D.oaxaca_ind){ const b=document.querySelector('[data-wf="oaxaca_ind"]'); b.disabled=true; b.title="재해 자료 미수집"; document.querySelector('[data-wf="oaxaca_occ"]').setAttribute("aria-pressed","true"); b.setAttribute("aria-pressed","false"); }
+document.getElementById("themeBtn").addEventListener("click",()=>{ const r=document.documentElement; const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme=dark?"light":"dark"; renderAll(); });
+renderAll();
+})();
+</script>
+</body>
+</html>

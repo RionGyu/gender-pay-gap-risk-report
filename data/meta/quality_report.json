@@ -1,0 +1,52 @@
+{
+ "wage_occ": {
+  "status": "ok",
+  "years": [
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "cells": 9198,
+  "rows_in": 128772,
+  "rows_out": 128772,
+  "check_wage_components_fail(>1%)": 0,
+  "check_wage_components_tested": 9198,
+  "check_sex_sum_fail(>1%)": 11,
+  "check_sex_sum_tested": 3002,
+  "cells_without_workers": 0
+ },
+ "wage_ind": {
+  "status": "ok",
+  "years": [
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "cells": 17641,
+  "rows_in": 246974,
+  "rows_out": 246974,
+  "check_wage_components_fail(>1%)": 0,
+  "check_wage_components_tested": 17641,
+  "check_sex_sum_fail(>1%)": 73,
+  "check_sex_sum_tested": 5731,
+  "cells_without_workers": 0
+ },
+ "wage_occ_career": {
+  "status": "no_raw_files"
+ },
+ "injury_micro": {
+  "status": "no_raw_files"
+ },
+ "injury_manual": {
+  "status": "not_provided"
+ },
+ "kwcs": {
+  "status": "not_provided"
+ }
+}
